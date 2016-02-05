@@ -2,12 +2,29 @@
   (:require
     [yesql.core :refer [defqueries]]
     [config.core :refer [env]]
+    [conman.core :as conman]
+    [mount.core :refer [defstate]]
 ))
 
-(def conn
-  {:classname      "org.sqlite.JDBC"
-   :connection-uri (:database-url env)
-   :naming         {:keys   clojure.string/lower-case
-                    :fields clojure.string/upper-case}})
+(def pool-spec
+  {:adapter   :sqlite
+   :init-size 1
+   :min-idle  1
+   :max-idle  4
+   :max-active 32
+   :jdbc-url (env :database-url)})
 
-(defqueries "sql/queries.sql" {:connection conn})
+(defonce ^:dynamic conn (atom nil))
+
+(defn connect! []
+  (conman/connect! conn
+                   pool-spec))
+
+(defn disconnect! [conn]
+  (conman/disconnect! conn))
+
+(defstate conn
+          :start (connect!)
+          :stop (disconnect! conn))
+
+(conman/bind-connection conn "sql/queries.sql")

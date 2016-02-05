@@ -24,7 +24,7 @@
    ;; DB
    [org.xerial/sqlite-jdbc "3.8.11.1"]
    [migratus "0.8.9"]
-   [conman "0.2.9"]
+   [conman "0.3.0"]
 
    ;; utils
    [compojure "1.4.0"]
