@@ -30,6 +30,7 @@
    [compojure "1.4.0"]
    [bouncer "1.0.0"]
    [mount "0.1.8"]
+   [cheshire "5.5.0"]
   ]
 
   :min-lein-version "2.0.0"

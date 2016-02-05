@@ -1,9 +1,20 @@
 (ns sempro.routes.home
   (:require [compojure.core :refer [defroutes GET]]
-            [ring.util.http-response :refer [ok]]
             [ring.util.http-response :as response]
-            [clojure.java.io :as io]))
+            [cheshire.core :as json]
+))
+
+(defn to-json
+  [string]
+  (json/generate-string string))
+
+(defn create-response
+  "json should be a map"
+  [json]
+  (ring.util.response/content-type
+    (response/ok (to-json json))
+    "application/json"))
 
 (defroutes home-routes
-  (GET "/" [] (response/ok "home"))
-  (GET "/about" [] (response/ok "about")))
+  (GET "/" [] (create-response {:body "home"}))
+  (GET "/about" [] (create-response {:message "about"})))
