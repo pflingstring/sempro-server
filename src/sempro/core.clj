@@ -1,9 +1,13 @@
 (ns sempro.core
-  (:require [sempro.handler :refer [app init destroy]]
-            [luminus.repl-server :as repl]
-            [luminus.http-server :as http]
-            [sempro.db.migrations :as migrations]
-            [config.core :refer [env]])
+  (:require
+    [sempro.handler :refer [app init destroy]]
+    [sempro.db.migrations :as migrations]
+
+    [luminus.repl-server :as repl]
+    [luminus.http-server :as http]
+
+    [config.core :refer [env]]
+  )
   (:gen-class))
 
 (defn parse-port [port]

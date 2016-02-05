@@ -1,14 +1,18 @@
 (ns sempro.handler
-  (:require [compojure.core :refer [defroutes routes wrap-routes]]
-            [sempro.routes.home :refer [home-routes]]
-            [sempro.middleware :as middleware]
-            [clojure.tools.logging :as log]
-            [compojure.route :as route]
-            [config.core :refer [env]]
-            [sempro.config :refer [defaults]]
-            [mount.core :as mount]
-            [ring.util.http-response :as response]
-            [luminus.logger :as logger]))
+  (:require
+    [compojure.core :refer [defroutes routes wrap-routes]]
+    [compojure.route :as route]
+
+    [sempro.routes.home :refer [home-routes]]
+    [sempro.middleware :as middleware]
+    [sempro.config :refer [defaults]]
+
+    [ring.util.http-response :as response]
+    [clojure.tools.logging :as log]
+    [luminus.logger :as logger]
+    [config.core :refer [env]]
+    [mount.core :as mount]
+))
 
 (defn init
   "init will be called once when

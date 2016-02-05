@@ -1,7 +1,8 @@
 (ns sempro.routes.home
-  (:require [compojure.core :refer [defroutes GET]]
-            [ring.util.http-response :as response]
-            [cheshire.core :as json]
+  (:require
+    [compojure.core :refer [defroutes GET]]
+    [ring.util.http-response :as response]
+    [cheshire.core :as json]
 ))
 
 (defn to-json

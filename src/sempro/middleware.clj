@@ -1,11 +1,14 @@
 (ns sempro.middleware
-  (:require [clojure.tools.logging :as log]
-            [config.core :refer [env]]
-            [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
-            [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
-            [ring.middleware.format :refer [wrap-restful-format]]
-            [ring.util.http-response :as response]
-            [sempro.config :refer [defaults]]))
+  (:require
+    [clojure.tools.logging :as log]
+    [sempro.config :refer [defaults]]
+    [config.core :refer [env]]
+
+    [ring.middleware.defaults :refer [site-defaults wrap-defaults]]
+    [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
+    [ring.middleware.format :refer [wrap-restful-format]]
+    [ring.util.http-response :as response]
+))
 
 (defn wrap-internal-error [handler]
   (fn [req]

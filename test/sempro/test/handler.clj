@@ -1,7 +1,9 @@
 (ns sempro.test.handler
-  (:require [clojure.test :refer :all]
-            [ring.mock.request :refer :all]
-            [sempro.handler :refer :all]))
+  (:require
+    [clojure.test :refer :all]
+    [ring.mock.request :refer :all]
+    [sempro.handler :refer :all]
+))
 
 (deftest test-app
   (testing "main route"

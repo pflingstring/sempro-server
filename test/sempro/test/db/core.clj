@@ -4,7 +4,8 @@
             [clojure.test :refer :all]
             [clojure.java.jdbc :as jdbc]
             [config.core :refer [env]]
-            [mount.core :as mount]))
+            [mount.core :as mount]
+))
 
 (use-fixtures
   :once
