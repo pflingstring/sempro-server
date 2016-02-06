@@ -11,7 +11,7 @@
 *.jar
 *.log
 
-
+sempro_test.db
 sempro_dev.db
 profiles.clj
 .nrepl-port

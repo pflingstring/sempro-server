@@ -5,20 +5,20 @@
 ))
 
 (defn setup-db [f]
-  (db/connect!)
+  db/start-test-db
   (f)
-  (db/disconnect! db/conn))
+  (db/disconnect! db/conn-test))
 
 (use-fixtures :each
   setup-db)
 
 (deftest test-users
-  (is (= [{:id         "1"
+  (is (= [{:id         1
            :first_name "Sam"
            :last_name  "Smith"
            :email      "sam.smith@example.com"
-           :pass       "pass"
-           :admin      nil
-           :last_login nil
-           :is_active  nil}]
-         (db/get-user {:id "1"}))))
+           :phone      nil
+           :role       nil
+           :pass       "pass"}]
+         (db/get-user {:id "1"}
+                      db/test-db-url))))
