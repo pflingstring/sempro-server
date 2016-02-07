@@ -6,6 +6,7 @@
     [sempro.routes.home :refer [home-routes]]
     [sempro.middleware :as middleware]
     [sempro.config :refer [defaults]]
+    [sempro.db.core :as db]
 
     [ring.util.http-response :as response]
     [clojure.tools.logging :as log]
@@ -21,6 +22,7 @@
    put any initialization code here"
   []
   (logger/init env)
+  (mount/start db/conn db/conn-test)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))
   ((:init defaults)))
@@ -31,6 +33,7 @@
   []
   (log/info "sempro is shutting down...")
   (doseq [component (:stopped (mount/stop))]
+    (mount.core/stop component)
     (log/info component "stopped"))
   (log/info "shutdown complete!"))
 
