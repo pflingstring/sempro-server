@@ -26,19 +26,18 @@
     (if (= env? "test")
       (conman/connect! conn pool-test)
       (conman/connect! conn pool-spec))
-  conn))
+    conn))
 
 (defn disconnect! [conn]
   (conman/disconnect! conn))
 
-(defn bind-queries [conn]
-  (conman/bind-connection conn "sql/queries.sql"))
+(conman/bind-connection conn "sql/queries.sql")
 
 (defstate conn
           :start (connect! "dev")
-          :stop (disconnect! conn))
+          :stop  (disconnect! conn))
 
 (defstate conn-test
           :start (connect! "test")
-          :stop (disconnect! conn-test))
+          :stop  (disconnect! conn-test))
 
