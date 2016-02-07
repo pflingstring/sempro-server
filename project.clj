@@ -31,6 +31,7 @@
    [bouncer "1.0.0"]
    [mount "0.1.8"]
    [cheshire "5.5.0"]
+   [midje "1.8.3"]
   ]
 
   :min-lein-version "2.0.0"

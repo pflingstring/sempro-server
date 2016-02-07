@@ -4,9 +4,12 @@
     [config.core :refer [env]]
     [conman.core :as conman]
     [mount.core :refer [defstate]]
-))
+    ))
 
-(def test-db-url "jdbc:sqlite:sempro_test.db")
+(def ^:dynamic conn)
+(def ^:dynamic conn-test)
+(def test-jdbc "jdbc:sqlite:sempro_test.db")
+
 (def pool-spec
   {:adapter    :sqlite
    :init-size  1
@@ -15,31 +18,27 @@
    :max-active 32
    :jdbc-url   (env :database-url)})
 
-;;
-;; State Management
-;;
-(defonce ^:dynamic conn-dev  (atom nil))
-(defonce ^:dynamic conn-test (atom nil))
+(def pool-test
+  (assoc pool-spec :jdbc-url test-jdbc))
 
-(defn connect! [conn pool]
-  (conman/connect! conn pool))
+(defn connect! [env?]
+  (let [conn (atom nil)]
+    (if (= env? "test")
+      (conman/connect! conn pool-test)
+      (conman/connect! conn pool-spec))
+  conn))
 
 (defn disconnect! [conn]
   (conman/disconnect! conn))
 
-(defn run-db [conn pool]
-  (defstate conn
-            :start (connect! conn pool)
-            :stop (disconnect! conn)))
-
-(defn create-queries [conn]
+(defn bind-queries [conn]
   (conman/bind-connection conn "sql/queries.sql"))
 
-;;
-;; Utils
-;;
-(def start-test-db
-  (do (create-queries conn-test)
-      (run-db conn-test
-              (assoc pool-spec
-                     :jdbc-url test-db-url))))
+(defstate conn
+          :start (connect! "dev")
+          :stop (disconnect! conn))
+
+(defstate conn-test
+          :start (connect! "test")
+          :stop (disconnect! conn-test))
+
