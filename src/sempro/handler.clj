@@ -3,7 +3,7 @@
     [compojure.core :refer [defroutes routes wrap-routes]]
     [compojure.route :as route]
 
-    [sempro.routes.home :refer [home-routes]]
+    [sempro.routes.home :refer [home-routes user-routes]]
     [sempro.middleware :as middleware]
     [sempro.config :refer [defaults]]
     [sempro.db.core :as db]
@@ -40,6 +40,7 @@
 (def app-routes
   (routes
     home-routes
+    user-routes
     (route/not-found
       (response/bad-request "not found"))))
 
