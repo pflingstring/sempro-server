@@ -25,8 +25,8 @@
         errors (first  parsed-user)
         user   (second parsed-user)]
     (if (= nil errors)
-      (if [= env "test"]
+      (if (= (first env) "test")
         (do (db/create-user! user db/test-jdbc) [true user])
-        (do (db/create-user! user                true user)))
+        (do (db/create-user! user) [true user]))
       [false errors])))
 

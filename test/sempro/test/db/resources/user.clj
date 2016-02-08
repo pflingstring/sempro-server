@@ -4,7 +4,9 @@
   {:first_name "Harry"
    :last_name  "Potter"
    :email "hurry@hogwards.express"
-   :pass  "expeliarmus"})
+   :pass  "expeliarmus"
+   :role nil
+   :phone nil})
 
 (def user-rand
   {:first_name "Rand"

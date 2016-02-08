@@ -3,6 +3,7 @@
     [sempro.handler :refer [app init destroy]]
     [luminus.http-server :as http]
     [config.core :refer [env]]
+    [sempro.db.migrations :as m]
 ))
 
 (defn start []
@@ -17,4 +18,6 @@
   (stop)
   (start))
 
-
+(defn clean-db [db]
+  (m/migrate ["rollback" db])
+  (m/migrate ["migrate" db]))

@@ -24,3 +24,8 @@ WHERE email = :email
 -- delete a user given the id
 DELETE FROM users
 WHERE id = :id
+
+-- name: delete-user-by-email!
+-- delete a user given the email
+DELETE FROM users
+WHERE email = :email
