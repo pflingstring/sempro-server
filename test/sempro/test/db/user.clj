@@ -10,49 +10,18 @@
     ))
 
 ;;
-;; DB STUFF
-;;
-(def drop-user-table
-  (do (migrate ["rollback" "test"])
-      (migrate ["migrate"  "test"])))
-
-; execute query in test DB
-(def run #(%1 %2 db/test-jdbc))
-
-
-;;
-;; REQUESTS
-;;
-
-
-;;
 ;; TESTS
 ;;
+(conman.core/with-transaction [t-conn db/conn]
+  (jdbc/db-set-rollback-only! t-conn)
+  (fact "..:: USER  TESTS ::.."
 
-(fact "..:: USER  TESTS ::.."
-
-  (facts "create new user"
-    (with-state-changes [(before :facts  drop-user-table)]
-
-      (fact "create user with SQL query generated in sempro.db.core"
-        (let [harry res/user-harry
-              user (do (run db/create-user! harry)
-                       (first (run db/get-user-by-email {:email (:email harry)})))]
-          user) => (-> res/user-harry (assoc :id 1)))
-
-      (fact "create a user with sempro.models.user/create-user"
-        (with-state-changes [(after :facts (db/delete-user-by-email! {:email (:email res/user-rand)}))]
-          (fact "should create a user in DEV_DB"
-           (let [rand res/user-rand
-                 user (do (create-user rand)
-                          (first (db/get-user-by-email {:email (:email rand)})))]
-             user) => (-> res/user-rand (assoc :id 1))))
-
-          (fact "should create a user in TEST_DB"
-            (let [rand res/user-rand
-                  user (do (create-user rand "test")
-                           (first (run db/get-user-by-email {:email (:email rand)})))]
-              user) => (-> res/user-rand (assoc :id 2))))
-      ))
-
+    (facts "create new user using models.user"
+        (fact "should successfully create a user"
+          (let [rand res/user-rand
+                user (do (create-user rand)
+                         (-> (db/get-user-by-email {:email (:email rand)})
+                             (first) (assoc :id 'IGNORE)))]
+            user) => contains res/user-rand))
+      )
   )

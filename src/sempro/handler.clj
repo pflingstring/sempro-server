@@ -22,7 +22,6 @@
    put any initialization code here"
   []
   (logger/init env)
-  (mount/start db/conn db/conn-test)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))
   ((:init defaults)))

@@ -16,7 +16,7 @@
     :email [v/email v/required]
     :pass   v/required))
 
-(defn create-user [user & env]
+(defn create-user [user]
   "`user` must be a map
   returns a vector with 2 elements [bool, {map}]
   if user is valid: [true, {user}]
@@ -25,8 +25,6 @@
         errors (first  parsed-user)
         user   (second parsed-user)]
     (if (= nil errors)
-      (if (= (first env) "test")
-        (do (db/create-user! user db/test-jdbc) [true user])
-        (do (db/create-user! user) [true user]))
+      (do (db/create-user! user) [true user])
       [false errors])))
 
