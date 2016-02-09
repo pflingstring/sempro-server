@@ -14,7 +14,7 @@
     :first_name v/required
     :last_name  v/required
     :email [v/email v/required]
-    :pass   v/required))
+    :pass [v/required [v/min-count 6]]))
 
 (defn create-user [user]
   "`user` must be a map
@@ -26,5 +26,5 @@
         user   (second parsed-user)]
     (if (= nil errors)
       (do (db/create-user! user) [true user])
-      [false errors])))
+      [false {:error {:input-validation errors}}])))
 

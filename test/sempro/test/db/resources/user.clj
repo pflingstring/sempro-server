@@ -16,3 +16,20 @@
    :pass "elmindreda"
    :role nil
    :phone nil})
+
+(def kaput-email
+  {:first_name "Helmut"
+   :last_name  "Kaput"
+   :email "kaput@email"
+   :pass  "kaputemail"})
+
+(def kaput-name
+  {:first_name "ArtooDetoo"
+   :last_name  "R2-D2"
+   :email "beep@leep.com"
+   :pass "superencryption"})
+
+(def kaput-pass
+  {:first_name "Noob"
+   :last_name  "Lol"
+   :pass "short"})
