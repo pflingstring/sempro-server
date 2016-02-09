@@ -7,8 +7,6 @@
     ))
 
 (def ^:dynamic conn)
-(def ^:dynamic conn-test)
-(def test-jdbc "jdbc:sqlite:sempro_test.db")
 
 (def pool-spec
   {:adapter    :sqlite
@@ -18,14 +16,9 @@
    :max-active 32
    :jdbc-url   (env :database-url)})
 
-(def pool-test
-  (assoc pool-spec :jdbc-url test-jdbc))
-
-(defn connect! [env?]
+(defn connect! []
   (let [conn (atom nil)]
-    (if (= env? "test")
-      (conman/connect! conn pool-test)
-      (conman/connect! conn pool-spec))
+    (conman/connect! conn pool-spec)
     conn))
 
 (defn disconnect! [conn]
@@ -34,10 +27,5 @@
 (conman/bind-connection conn "sql/queries.sql")
 
 (defstate conn
-          :start (connect! "dev")
+          :start (connect!)
           :stop  (disconnect! conn))
-
-(defstate conn-test
-          :start (connect! "test")
-          :stop  (disconnect! conn-test))
-
