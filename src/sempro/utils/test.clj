@@ -2,7 +2,8 @@
   (:require
     [ring.mock.request :as m]
     [ring.util.http-response :refer [bad-request]]
-    [cheshire.core :as json]))
+    [cheshire.core :as json]
+    [sempro.utils.error :as err]))
 
 ;; requests util
 (defn post-req [url body]
@@ -19,11 +20,9 @@
 
 
 ;; response util
-(def error-body  #(assoc {} :error %))
-(def input-error #(-> (assoc {} :input-validation %) (error-body)))
 (def dissoc-headers #(dissoc % :headers))
 
-(def error-response #(-> (input-error %)
+(def error-response #(-> (err/input-error %)
                          (json/generate-string)
                          (bad-request)
                          (dissoc-headers)))
