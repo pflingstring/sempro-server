@@ -23,7 +23,7 @@
 
   (fact "..:: USER  TESTS ::.."
 
-    (facts "create new user using models.user"
+    (facts "attempt to create a new user using models.user"
       (fact "should successfully create a user"
         (let [rand res/user-rand
               user (do (create-user rand)
@@ -31,9 +31,11 @@
                            (first) (u/ignore-key :id)))]
           user) => contains res/user-rand)
 
-      (facts "should return bad request and an error message"
-        (fact "email should not pass"
+      (facts "should return bad request and an validation-error message"
+        (fact "email-error"
           (new-user-req res/kaput-email) => (contains (u/error-response {:email '("email must be a valid email address")})))
 
+        (fact "password-error"
+          (new-user-req res/kaput-pass) => (contains (u/error-response {:pass '("pass is less than the minimum")})))
           ))
     ))

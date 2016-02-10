@@ -32,4 +32,5 @@
 (def kaput-pass
   {:first_name "Noob"
    :last_name  "Lol"
+   :email "pass@word.me"
    :pass "short"})

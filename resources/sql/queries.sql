@@ -1,4 +1,4 @@
--- name: create-user!
+-- name: create-user<!
 -- creates a new user record
 INSERT INTO users
 (first_name, last_name, email, pass)

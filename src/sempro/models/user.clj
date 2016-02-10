@@ -10,8 +10,8 @@
   returns a vector with 2 elements
   the first argument is `nil` if user is valid
   else it is a map with the errors"
-  (b/validate user
-    :first_name v/required
+  (b/validate user                                          ; TODO: add better validation
+    :first_name v/required                                  ; may contain only letters
     :last_name  v/required
     :email [v/email v/required]
     :pass [v/required [v/min-count 6]]))
@@ -25,6 +25,8 @@
         errors (first  parsed-user)
         user   (second parsed-user)]
     (if (= nil errors)
-      (do (db/create-user! user) [true user])
+      (let [id (db/create-user<! user)]
+        (conj [true] (-> (assoc user :id (id (first (keys id))))
+                         (dissoc :pass))))
       [false {:error {:input-validation errors}}])))
 
