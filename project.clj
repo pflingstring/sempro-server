@@ -32,7 +32,7 @@
    [mount "0.1.8"]
    [cheshire "5.5.0"]
    [midje "1.8.3"]
-  ]
+   [buddy "0.10.0"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "sempro.jar"

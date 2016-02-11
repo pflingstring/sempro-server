@@ -3,7 +3,18 @@
     [sempro.db.core :as db]
     [bouncer.validators :as v]
     [bouncer.core :as b]
-    ))
+    [buddy.hashers :as hashers]))
+
+(def hashing-options {:alg :pbkdf2+sha256 :salt "salatic"})
+(defn hash-pass [password]
+  (hashers/encrypt password hashing-options))
+
+(defn password-matches? [user-id password]
+  (let [hashed-pass (-> (assoc {} :id user-id)
+                        (db/get-user)
+                        (first)
+                        (get :pass))]
+    (hashers/check password hashed-pass)))
 
 (defn validate-user [user]
   "`user` must be a map
@@ -25,7 +36,8 @@
         errors (first  parsed-user)
         user   (second parsed-user)]
     (if (= nil errors)
-      (let [id (db/create-user<! user)]
+      (let [pass (hash-pass (:pass user))
+            id (db/create-user<! (assoc user :pass pass))]
         (conj [true] (-> (assoc user :id (id (first (keys id))))
                          (dissoc :pass))))
       [false {:error {:input-validation errors}}])))

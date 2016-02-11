@@ -34,3 +34,9 @@
    :last_name  "Lol"
    :email "pass@word.me"
    :pass "short"})
+
+(def hashed-password-user
+  {:first_name "Hash"
+   :last_name "Pass"
+   :email "hash@my.mail"
+   :pass "HASHmyPASSword"})
