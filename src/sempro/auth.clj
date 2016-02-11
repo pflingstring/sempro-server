@@ -1,7 +1,8 @@
 (ns sempro.auth
   (:require
     [buddy.sign.jws :as jws]
-    [buddy.core.keys :as keys]))
+    [buddy.core.keys :as keys]
+    [buddy.auth.backends.token :refer [jws-backend]]))
 
 (def private-key (keys/private-key "ec-privatekey.pem"))
 (def public-key  (keys/public-key  "ec-publickey.pem"))
@@ -16,3 +17,6 @@
   "token must be a string
   unsigns the map and returns the original map"
   (jws/unsign token public-key sign-alg))
+
+(def auth-backend (jws-backend {:secret  public-key
+                                :options sign-alg}))

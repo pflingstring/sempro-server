@@ -8,6 +8,9 @@
     [ring.middleware.anti-forgery :refer [wrap-anti-forgery]]
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.util.http-response :as response]
+
+    [sempro.auth :refer [auth-backend]]
+    [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
 ))
 
 (defn wrap-internal-error [handler]
@@ -17,11 +20,6 @@
       (catch Throwable t
         (log/error t)
         (response/bad-request "Internal Error")))))
-
-(defn wrap-csrf [handler]
-  (wrap-anti-forgery
-    handler
-    (response/bad-request "Invalid anti-forgery token")))
 
 (defn wrap-formats [handler]
   (let [wrapped (wrap-restful-format
@@ -34,6 +32,8 @@
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+      (wrap-authentication auth-backend)
+      (wrap-authorization auth-backend)
       wrap-formats
       (wrap-defaults
         (-> site-defaults

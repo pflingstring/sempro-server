@@ -9,9 +9,9 @@
 (defn hash-pass [password]
   (hashers/encrypt password hashing-options))
 
-(defn password-matches? [user-id password]
-  (let [hashed-pass (-> (assoc {} :id user-id)
-                        (db/get-user)
+(defn password-matches? [email password]
+  (let [hashed-pass (-> (assoc {} :email email)
+                        (db/get-user-by-email)
                         (first)
                         (get :pass))]
     (hashers/check password hashed-pass)))

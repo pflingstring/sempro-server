@@ -41,21 +41,21 @@
 
     (facts "password hashing"
       (let [plain-pass "s3cr3t_P@s$w0rd"
-            user-id (-> (create-user res/hashed-password-user)
-                        (second)
-                        (:id))]
+            user-email (-> (create-user res/hashed-password-user)
+                           (second)
+                           (:email))]
         (fact "should pass the test"
           (hash-pass plain-pass) => "pbkdf2+sha256$73616c61746963$100000$1bcaca26f7b0eca0216174b1859f19fc6ef2a5a1a34beb301e0f793103e65520"
-          (password-matches? user-id "HASHmyPASSword") => true
-          (password-matches? user-id plain-pass) => false
+          (password-matches? user-email "HASHmyPASSword") => true
+          (password-matches? user-email plain-pass) => false
           (hash-pass plain-pass) =not=> "IMAHackerLOL_89")))
 
     (facts "authorise"
       (let [user (second (create-user res/user-harry))]
         (fact "accept the correct password"
-          (password-matches? (:id user) "expeliarmus") => true)
+          (password-matches? (:email user) "expeliarmus") => true)
         (fact "reject incorrect password"
-          (password-matches? (:id user) "ronWeaserby") => false)
+          (password-matches? (:email user) "ronWeaserby") => false)
 
         (fact "create auth-token and verify it"
           (let [id {:id 123}]
