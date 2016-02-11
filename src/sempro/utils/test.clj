@@ -22,8 +22,9 @@
 ;; response util
 (def dissoc-headers #(dissoc % :headers))
 
-(def error-response #(-> (err/input-error %)
-                         (json/generate-string)
-                         (bad-request)
-                         (dissoc-headers)))
+(defn error-response [error-type]
+  #(-> (error-type %)
+       (json/generate-string)
+       (bad-request)
+       (dissoc-headers)))
 
