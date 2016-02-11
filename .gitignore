@@ -10,6 +10,7 @@
 *.class
 *.jar
 *.log
+*.pem
 
 sempro_test.db
 sempro_dev.db

@@ -6,7 +6,8 @@
     [sempro.utils.test :as u]
     [midje.sweet :refer :all]
     [clojure.java.jdbc :as jdbc]
-    [ring.util.http-response :refer [ok bad-request]]))
+    [ring.util.http-response :refer [ok bad-request]]
+    [sempro.auth :as auth]))
 ;;
 ;; REQUESTS
 ;;
@@ -54,4 +55,8 @@
         (fact "accept the correct password"
           (password-matches? (:id user) "expeliarmus") => true)
         (fact "reject incorrect password"
-          (password-matches? (:id user) "ronWeaserby") => false)))))
+          (password-matches? (:id user) "ronWeaserby") => false)
+
+        (fact "create auth-token and verify it"
+          (let [id {:id 123}]
+            id => (-> id auth/sign-token auth/unsign-token)))))))
