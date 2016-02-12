@@ -14,3 +14,6 @@
 (defroutes user-routes
   (POST "/user/create" req (h/create-user (:params req)))
   (POST "/login"       req (h/login       (:params req))))
+
+(defroutes restricted
+  (GET "/restricted" req (h/restricted req)))

@@ -10,6 +10,8 @@
     [ring.util.http-response :as response]
 
     [sempro.auth :refer [auth-backend]]
+    [buddy.auth :refer [authenticated?]]
+    [buddy.auth.accessrules :refer [restrict]]
     [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
 ))
 
@@ -29,6 +31,15 @@
       ;; disable wrap-formats for websockets
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
+
+(defn on-error [request response]
+  {:status 403
+   :headers {"Content-Type" "text/plain"}
+   :body (str "Acces to " (:uri request) " is not authorized")})
+
+(defn wrap-restricted [handler]
+  (restrict handler {:handler authenticated?
+                     :on-error on-error}))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)

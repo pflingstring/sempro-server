@@ -36,3 +36,6 @@
   (if (authenticated? request)
     (create-response ok (:identity request))
     (throw-unauthorized "Must be authorized")))
+
+(defn restricted [request]
+  (create-response ok {:message "RESTRICTED"}))
