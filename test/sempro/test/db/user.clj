@@ -1,7 +1,7 @@
 (ns sempro.test.db.user
   (:require
     [sempro.models.user :refer [create-user password-matches? hash-pass]]
-    [sempro.test.db.resources.user :as res]
+    [sempro.test.db.resources.users :as res]
     [sempro.db.core :as db]
     [sempro.utils.test :as u]
     [midje.sweet :refer :all]

@@ -1,4 +1,4 @@
-(ns sempro.test.db.resources.user)
+(ns sempro.test.db.resources.users)
 
 (def user-harry
   {:first_name "Harry"

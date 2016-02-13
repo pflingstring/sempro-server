@@ -24,7 +24,9 @@
 (defn disconnect! [conn]
   (conman/disconnect! conn))
 
-(conman/bind-connection conn "sql/queries.sql")
+(conman/bind-connection conn
+  "sql/users.sql"
+  "sql/events.sql")
 
 (defstate conn
           :start (connect!)
