@@ -12,3 +12,8 @@ WHERE id = :id
 -- name: get-all-events
 -- retrieve all events
 SELECT * FROM events;
+
+-- name: delete-event!
+-- delete event with de given id
+DELETE FROM events
+WHERE id = :id

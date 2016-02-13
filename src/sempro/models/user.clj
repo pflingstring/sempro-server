@@ -16,7 +16,7 @@
                         (get :pass))]
     (hashers/check password hashed-pass)))
 
-(defn validate-user [user]
+(defn validate [user]
   "`user` must be a map
   returns a vector with 2 elements
   the first argument is `nil` if user is valid
@@ -27,12 +27,12 @@
     :email [v/email v/required]
     :pass [v/required [v/min-count 6]]))
 
-(defn create-user [user]
+(defn create [user]
   "`user` must be a map
   returns a vector with 2 elements [bool, {map}]
   if user is valid: [true, {user}]
   else:             [false, {validation-errors}]"
-  (let [parsed-user (validate-user user)
+  (let [parsed-user (validate user)
         errors (first  parsed-user)
         user   (second parsed-user)]
     (if (= nil errors)
