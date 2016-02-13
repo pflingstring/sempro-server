@@ -9,9 +9,9 @@
     [buddy.auth :refer [authenticated? throw-unauthorized]])
   (:import (java.sql SQLException)))
 
-(defn create-user [req]
+(defn create [req]
   (try
-    (let [parsed-req (user/create-user req)
+    (let [parsed-req (user/create req)
           valid-user? (first parsed-req)
           body (second parsed-req)]
       (if valid-user?
