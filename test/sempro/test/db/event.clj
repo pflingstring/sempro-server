@@ -20,6 +20,9 @@
       (fact "should return 2 ankneipe events" (m/create res/ankneipe)
         (m/get-all) => (conj '() (assoc res/ankneipe :id 2) (assoc res/ankneipe :id 1))))
 
+    (facts "validation"
+      (m/validate res/kaput-date) =not=> [nil res/kaput-date])
+
     (fact "using the handlers"
       (let [user (second (sempro.models.user/create user-rand))
             login-data {:email (:email user) :pass "elmindreda"}

@@ -2,7 +2,8 @@
   (:require
     [sempro.db.core :as db]
     [bouncer.core :as b]
-    [bouncer.validators :as v]))
+    [bouncer.validators :as v]
+    [clj-time.format :as f]))
 
 (defn validate [event]
   "`event` must be a map
@@ -13,7 +14,7 @@
   (b/validate event
     :name v/required
     :description v/required
-    :date [v/required v/datetime]))
+    :date v/datetime [(:date-hour-minute f/formatters)]))
 
 (defn create [event]
   (let [parsed-event (validate event)
