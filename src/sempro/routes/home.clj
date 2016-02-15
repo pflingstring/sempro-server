@@ -9,17 +9,19 @@
     ))
 
 (defroutes home-routes
-  (GET "/" [] user/home)
+  (GET "/"      [] user/home)
   (GET "/about" [] (create-response ok {:message "about"})))
 
 (defroutes user-routes
   (POST "/user/create" req (user/create (:params req)))
-  (POST "/login" req (user/login (:params req))))
+  (POST "/login"       req (user/login  (:params req))))
 
 (defroutes restricted
-  (GET "/restricted" req (user/restricted req)))
+  (GET "/restricted" [] (user/restricted)))
 
 (defroutes event-routes
-  (GET  "/events" []   (event/get-all))
-  (POST "/events" req  (event/create    (:params req)))
-  (GET "/events/:id" [id] (event/get-id (:params id))))
+  (GET "/events"     []   (event/get-all))
+  (GET "/events/:id" [id] (event/get-id (:params id)))
+
+  (POST "/events" req (event/create (:params req)))
+  (POST "/events/:id/delete" [id] (event/delete-id id)))
