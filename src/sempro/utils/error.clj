@@ -5,7 +5,11 @@
 
 (def input-error
   #(-> (assoc {} :input-validation %)
-                      (error-body)))
+       (error-body)))
+
+(def not-found
+  #(-> (assoc {} :not-found %)
+       (error-body)))
 
 (def sql-exception
   #(-> (assoc {} :exception %)

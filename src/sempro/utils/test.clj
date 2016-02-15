@@ -1,9 +1,11 @@
 (ns sempro.utils.test
   (:require
-    [ring.mock.request :as m]
-    [cheshire.core     :as json]
+    [ring.mock.request  :as m]
+    [sempro.utils.error :as err]
+    [cheshire.core      :as json]
     [ring.util.http-response :refer [bad-request ok header]]
-    [sempro.utils.response   :refer [create-response]]))
+    [sempro.utils.response   :refer [create-response]]
+    ))
 
 
 ;; requests util
@@ -23,11 +25,6 @@
 (defn ignore-key [data key]
   (assoc data key 'IGNORE))
 
-(defn ignore-headers [request]
-  "adds an 'IGNORE symbol for :headers"
-  (ignore-key request :headers))
-
-
 
 ;; response util
 (def dissoc-headers #(dissoc % :headers))
@@ -38,8 +35,13 @@
        (bad-request)
        (dissoc-headers)))
 
+(def error (error-response err/error-body))
+(def not-found (error-response err/not-found))
+(def sql-error (error-response err/sql-exception))
+(def input-error (error-response err/input-error))
+
 (defn ok-response [body]
-  (create-response ok body))
+  (dissoc-headers (create-response ok body)))
 
 ;; user util
 (defn get-token [user]
