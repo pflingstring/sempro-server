@@ -1,11 +1,10 @@
 (ns sempro.utils.test
   (:require
     [ring.mock.request :as m]
+    [cheshire.core     :as json]
     [ring.util.http-response :refer [bad-request ok header]]
-    [sempro.utils.response :refer [create-response]]
-    [cheshire.core :as json]
-    [sempro.utils.error :as err]
-    [sempro.auth :as auth]))
+    [sempro.utils.response   :refer [create-response]]))
+
 
 ;; requests util
 (def wrap-middlewares #(sempro.handler/app %))
@@ -21,13 +20,13 @@
   (-> (m/request :get url)
       (wrap-middlewares)))
 
-
 (defn ignore-key [data key]
   (assoc data key 'IGNORE))
 
 (defn ignore-headers [request]
   "adds an 'IGNORE symbol for :headers"
   (ignore-key request :headers))
+
 
 
 ;; response util
