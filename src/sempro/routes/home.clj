@@ -21,7 +21,7 @@
 
 (defroutes event-routes
   (GET "/events"     []   (event/get-all))
-  (GET "/events/:id" [id] (event/get-id (:params id)))
+  (GET "/events/:id" [id] (event/get-id id))
 
   (POST "/events" req (event/create (:params req)))
   (POST "/events/:id/delete" [id] (event/delete-id id)))

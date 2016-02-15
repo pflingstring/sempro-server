@@ -3,32 +3,45 @@
     [sempro.test.db.resources.users  :refer [user-rand]]
     [sempro.test.db.resources.events :as res]
     [clojure.java.jdbc   :as jdbc]
-    [sempro.models.event :as m]
     [sempro.utils.test   :as u]
     [sempro.db.core      :as db]
-    [midje.sweet :refer :all]))
+    [midje.sweet :refer  :all]))
 
 (conman.core/with-transaction [t-conn db/conn]
   (jdbc/db-set-rollback-only! t-conn)
-
   (fact "..:: EVENTS ::.."
-
-
-    (fact "using the models.event"
-      (fact "create an event" (first (m/create res/ankneipe)) => true)
-      (fact "return ankneipe" (-> (m/get-id 1) (u/ignore-key :id)) => contains res/ankneipe)
-      (fact "return 2 ankneipe events" (m/create res/ankneipe)
-        (m/get-all) => (conj '() (assoc res/ankneipe :id 2) (assoc res/ankneipe :id 1))))
-
 
     (fact "using the handlers"
       (let [user (second (sempro.models.user/create user-rand))
             login-data {:email (:email user) :pass "elmindreda"}
             token (u/get-token login-data)
-            get-req #(u/ignore-headers  (u/authenticate-req (u/get-req  %) token))
-            post-req #(u/ignore-headers (u/authenticate-req (u/post-req %1 %2) token))]
+            get-req  #(u/dissoc-headers (u/authenticate-req (u/get-req %) token))
+            post-req #(u/dissoc-headers (u/authenticate-req (u/post-req %1 %2) token))]
 
-        (fact "return all events" (get-req "/events") => contains (u/ok-response res/all-events))
-        (fact "return abkneipe" (get-req "/events/2" res/abkneipe) => contains (u/ok-response res/abkneipe))
-        (fact "create ankneipe" (post-req "/events"  res/ankneipe) => contains (u/ok-response res/ankneipe))))
+        (fact "DB is empty"
+          (get-req "/events")   => (u/not-found "no events found")
+          (get-req "/events/1") => (u/not-found "id not found")
+          (post-req "/events/1/delete" nil) => (u/not-found "id not found"))
+
+        (fact "DB not empty"
+          (let [ankneipe (merge {:id 1} res/ankneipe)
+                abkneipe (merge {:id 2} res/abkneipe)]
+            (fact "create events"
+              (post-req "/events" res/ankneipe) => (u/ok-response res/ankneipe)
+              (post-req "/events" res/abkneipe) => (u/ok-response res/abkneipe))
+            (fact "get events"
+              (get-req "/events/1") => (u/ok-response ankneipe)
+              (get-req "/events/2") => (u/ok-response abkneipe)
+              (get-req "/events") => (u/ok-response [ankneipe abkneipe]))
+            (fact "delete events"
+              (post-req "/events/1/delete" nil) => (u/ok-response {:deleted true})
+              (post-req "/events/2/delete" nil) => (u/ok-response {:deleted true})
+              (post-req "/events/3/delete" nil) => (u/not-found "id not found"))
+            (get-req "/events") => (u/not-found "no events found")))
+
+        (fact "input-validation"
+          (post-req "/events" res/kaput-date) => (u/input-error {:date '("date must be a valid date")})
+          (post-req "/events" res/kaput-name) => (u/input-error {:name '("name must be present")})
+          (post-req "/events" res/kaput-description) => (u/input-error {:description '("description must be present")}))
+        ))
     ))

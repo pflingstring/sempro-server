@@ -1,6 +1,6 @@
 (ns sempro.handlers.event
   (:require
-    [ring.util.http-response :refer [ok bad-request created no-content]]
+    [ring.util.http-response :refer [ok bad-request]]
     [sempro.utils.response   :refer [create-response]]
     [sempro.models.event :as m]
     [sempro.utils.error  :as err]))
@@ -16,7 +16,7 @@
           valid? (first parsed)
           body (second parsed)]
       (if valid?
-        (create-response created body)
+        (create-response ok body)
         (create-response bad-request body)))
     (catch Exception e
       (create-response bad-request (err/sql-exception (.getMessage e))))))
@@ -27,7 +27,7 @@
   (let [events (m/get-all)]
     (if-not (empty? events)
       (create-response ok events)
-      (no-content))))
+      (create-response bad-request (err/not-found "no events found")))))
 
 (defn get-id [id]
   "`id` must be an Integer
@@ -36,11 +36,12 @@
   (let [event (m/get-id id)]
     (if-not (nil? event)
       (create-response ok event)
-      (no-content))))
+      (create-response bad-request (err/not-found "id not found")))))
 
 (defn delete-id [id]
   "`id` must be an Integer
-  returns a success(204) response if event is deleted"
+  returns an ok response if event is deleted"
   (let [deleted? (m/delete id)]
-    (when (= 1 deleted?)
-      (no-content))))
+    (if (= 1 deleted?)
+      (create-response ok {:deleted true})
+      (create-response bad-request (err/not-found "id not found")))))
