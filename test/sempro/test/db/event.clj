@@ -24,8 +24,8 @@
           (post-req "/events/1/delete" nil) => (u/not-found "id not found"))
 
         (fact "DB not empty"
-          (let [ankneipe (merge {:id 1} res/ankneipe)
-                abkneipe (merge {:id 2} res/abkneipe)]
+          (let [ankneipe (merge {:id 1} res/ankneipe {:info ""})
+                abkneipe (merge {:id 2} res/abkneipe {:info ""})]
             (fact "create events"
               (post-req "/events" res/ankneipe) => (u/ok-response res/ankneipe)
               (post-req "/events" res/abkneipe) => (u/ok-response res/abkneipe))

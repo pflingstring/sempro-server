@@ -3,4 +3,5 @@ CREATE TABLE events (
     , name          TEXT
     , description   TEXT
     , date          TEXT
+    , info          TEXT    DEFAULT  ""
 );
