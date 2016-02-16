@@ -43,3 +43,27 @@
         (conj [true] (-> (assoc user :id (row-id (first (keys row-id))))
                          (dissoc :pass))))
       [false {:error {:input-validation errors}}])))
+
+;;
+;; user status and jobs
+;;
+(def status
+  {:fux "Fux"
+   :AB  "ABursch"
+   :IAB "IBursch"
+   :AUS "Auswertiger"
+   :AH  "Alter Herr"})
+
+(def jobs
+  {:X   "ErstX"
+   :XX  "ZweitX"
+   :XXX "DrittX"
+   :FM  "FuxMajor"
+   ;; Aemter
+   :BKW "Bierwart"
+   :HKW "Hauptkasse"
+   :SW  "Sportwart"
+   :CW  "Coleurwart"
+   :HW  "Hauswart"
+   :VD  "Vergnugungsdirektor"
+   :KD  "Keildirektor"})
