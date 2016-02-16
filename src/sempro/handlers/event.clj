@@ -46,9 +46,13 @@
       (create-response ok {:deleted true})
       (create-response bad-request (err/not-found "id not found")))))
 
-(defn update-name [id req]
-  (let [updated? (m/update-name id req)]
-    (println updated?)
-    (if (= 1 updated?)
-      (create-response ok {:updated true})
-      (create-response bad-request (err/not-found "id not found")))))
+(defn update-event [id req]
+  "`id` must be an Integer
+  `req` must be a full event map
+    i.e. must contains all fields"
+  (let [parsed (m/update-event id req)
+        valid? (first parsed)
+        body  (second parsed)]
+    (if valid?
+      (create-response ok body)
+      (create-response bad-request body))))
