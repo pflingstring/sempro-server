@@ -3,7 +3,7 @@
     [compojure.core :refer [defroutes routes wrap-routes]]
     [compojure.route :as route]
 
-    [sempro.routes.home :refer [home-routes user-routes restricted event-routes]]
+    [sempro.routes.home :refer :all]
     [sempro.middleware :as middleware]
     [sempro.config :refer [defaults]]
     [sempro.db.core :as db]
@@ -41,6 +41,7 @@
     home-routes
     user-routes
     event-routes
+    event-updates
     (wrap-routes restricted middleware/wrap-restricted)
     (route/not-found
       (response/bad-request "not found"))))

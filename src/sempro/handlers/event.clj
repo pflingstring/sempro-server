@@ -45,3 +45,10 @@
     (if (= 1 deleted?)
       (create-response ok {:deleted true})
       (create-response bad-request (err/not-found "id not found")))))
+
+(defn update-name [id req]
+  (let [updated? (m/update-name id req)]
+    (println updated?)
+    (if (= 1 updated?)
+      (create-response ok {:updated true})
+      (create-response bad-request (err/not-found "id not found")))))

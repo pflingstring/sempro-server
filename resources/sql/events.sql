@@ -17,3 +17,9 @@ SELECT * FROM events;
 -- delete event with de given id
 DELETE FROM events
 WHERE id = :id
+
+-- name: update-event-name!
+-- update name given the id
+UPDATE events
+SET name = :name
+WHERE id = :id
