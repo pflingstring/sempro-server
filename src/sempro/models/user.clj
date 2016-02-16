@@ -67,3 +67,11 @@
    :HW  "Hauswart"
    :VD  "Vergnugungsdirektor"
    :KD  "Keildirektor"})
+
+(defn set-status [id status]
+  (let [status {:id id :status status}]
+    (db/set-user-status! status)))
+
+(defn set-job [id job]
+  (let [job {:id id :job job}]
+    (db/set-user-job! job)))

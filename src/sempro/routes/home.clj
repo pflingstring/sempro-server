@@ -14,7 +14,9 @@
 
 (defroutes user-routes
   (POST "/user/create" req (user/create (:params req)))
-  (POST "/login"       req (user/login  (:params req))))
+  (POST "/login"       req (user/login  (:params req)))
+  (POST "/user/:id/update/status" [id status] (user/update-status id status))
+  (POST "/user/:id/update/job"    [id job]    (user/update-job    id job)))
 
 (defroutes restricted
   (GET "/restricted" [] (user/restricted)))

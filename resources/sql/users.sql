@@ -29,3 +29,15 @@ WHERE id = :id
 -- delete a user given the email
 DELETE FROM users
 WHERE email = :email
+
+-- name: set-user-status!
+-- update status for given id
+UPDATE users SET
+  status = :status
+WHERE id = :id
+
+-- name: set-user-job!
+-- update job for given id
+UPDATE users SET
+  job = :job
+WHERE id = :id
