@@ -87,3 +87,21 @@
       (do (db/update-event! event)
           [true event])
       [false {:error {:input-validation errors}}])))
+
+(defn get-permissions
+  [id]
+  (first (db/get-event-permissions {:id id})))
+
+(defn update-permissions
+  [id readers writers]
+  (db/update-event-permissions!
+    {:id        id
+     :can_read  readers
+     :can_write writers}))
+
+(defn add-permissions
+  [id readers writers]
+  (db/add-event-permissions!
+    {:id id
+     :readers readers
+     :writers writers}))

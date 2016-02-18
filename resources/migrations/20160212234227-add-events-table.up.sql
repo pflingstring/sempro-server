@@ -4,4 +4,6 @@ CREATE TABLE events (
     , description   TEXT
     , date          TEXT
     , info          TEXT    DEFAULT  ""
+    , can_read      TEXT    DEFAULT  ""
+    , can_write     TEXT    DEFAULT  ""
 );

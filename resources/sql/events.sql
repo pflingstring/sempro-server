@@ -26,3 +26,23 @@ UPDATE events SET
   , date        = :date
   , info        = :info
 WHERE id = :id
+
+-- name: get-event-permissions
+-- get can_write and can_read columns for given id
+SELECT can_read, can_write
+FROM events
+WHERE id = :id
+
+-- name: update-event-permissions!
+-- update permissions for given ID
+UPDATE events SET
+  can_read  = :readers,
+  can_write = :writers
+WHERE id = :id
+
+-- name: add-event-permissions!
+-- add permissions for given ID
+UPDATE events SET
+  can_read  = can_read  || " " || :readers,
+  can_write = can_write || " " || :writers
+WHERE id = :id
