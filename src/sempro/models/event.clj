@@ -96,8 +96,8 @@
   [id readers writers]
   (db/update-event-permissions!
     {:id        id
-     :can_read  readers
-     :can_write writers}))
+     :readers readers
+     :writers writers}))
 
 (defn add-permissions
   [id readers writers]

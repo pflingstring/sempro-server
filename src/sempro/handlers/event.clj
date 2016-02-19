@@ -26,7 +26,7 @@
 (defn get-all [user]
   "returns an ok response with all events
   if there are any"
-  (let [events (filter #(= (:can_read %) user) (m/get-all))]
+  (let [events (filter #(.contains (:can_read %) user) (m/get-all))]
     (if-not (empty? events)
       (create-response ok events)
       (create-response bad-request (err/not-found "no events found")))))
@@ -58,6 +58,18 @@
     (if valid?
       (create-response ok body)
       (create-response bad-request body))))
+
+(defn change-permissions [type id req]
+  (let [readers (:readers req)
+        writers (:writers req)
+        added? (type id readers writers)]
+    (println (str "READERS:\n" readers "\n\nWRITERS\n" writers))
+    (if added?
+      (create-response ok {:added true})
+      (create-response bad-request (err/error-body "no permission added")))))
+
+(def update-permissions #(change-permissions m/update-permissions %1 %2))
+(def add-permissions    #(change-permissions m/add-permissions    %1 %2))
 
 ;;
 ;; Access rules
