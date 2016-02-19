@@ -41,7 +41,7 @@
     home-routes
     user-routes
     event-routes
-    (wrap-routes restricted middleware/wrap-restricted)
+    restricted
     (route/not-found
       (response/bad-request "not found"))))
 

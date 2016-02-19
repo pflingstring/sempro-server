@@ -19,7 +19,7 @@
   (POST "/user/:id/update/job"    [id job]    (user/update-job    id job)))
 
 (defroutes restricted
-  (GET "/restricted" [] (user/restricted)))
+  (GET "/restricted/:id" req (event/restricted req)))
 
 (defroutes event-routes
   (GET "/events"     []   (event/get-all))

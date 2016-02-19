@@ -56,3 +56,29 @@
     (if valid?
       (create-response ok body)
       (create-response bad-request body))))
+
+;;
+;; Access rules
+;;
+(defn can?
+  [action event-id user]
+  (let [permissions (m/get-permissions event-id)
+        can-read?  (some #(= % user) (clojure.string/split (:can_read permissions)  #" "))
+        can-write? (some #(= % user) (clojure.string/split (:can_write permissions) #" "))]
+    (cond
+      (= action "read")  can-read?
+      (= action "write") can-write?)))
+
+(def can-read?  #(can? "read"  %1 %2))
+(def can-write? #(can? "write" %1 %2))
+
+(defn restricted [req]
+  (let [user  (get-in req [:identity :email])
+        event (get-in req [:params :id])]
+    (if (can-read? event user)
+      (get-id event)
+      (create-response bad-request (err/not-found "access denied")))))
+
+(def access-rules
+  [{:uri "/events/:id"
+    :handler restricted}])

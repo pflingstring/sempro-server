@@ -9,9 +9,11 @@
     [ring.middleware.format :refer [wrap-restful-format]]
     [ring.util.http-response :as response]
 
+    [sempro.handlers.event :as event]
+
     [sempro.auth :refer [auth-backend]]
     [buddy.auth :refer [authenticated?]]
-    [buddy.auth.accessrules :refer [restrict]]
+    [buddy.auth.accessrules :refer [restrict wrap-access-rules]]
     [buddy.auth.middleware :refer [wrap-authentication wrap-authorization]]
 ))
 
@@ -37,12 +39,11 @@
    :headers {"Content-Type" "text/plain"}
    :body (str "Acces to " (:uri request) " is not authorized")})
 
-(defn wrap-restricted [handler]
-  (restrict handler {:handler authenticated?
-                     :on-error on-error}))
 
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
+      (wrap-access-rules {:rules event/access-rules
+                          :on-error on-error})
       (wrap-authentication auth-backend)
       (wrap-authorization auth-backend)
       wrap-formats
