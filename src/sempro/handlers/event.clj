@@ -71,19 +71,20 @@
       (= action "read")  can-read?
       (= action "write") can-write?)))
 
-(def can-read?  #(can? "read"  %1 %2))
-(def can-write? #(can? "write" %1 %2))
-
-(defn read-handler
-  [req]
+(defn check-permissions
+  [action req]
   (let [id   (get-in req [:match-params :id])
         user (get-in req [:identity :email])]
-    (println id user)
-    (can-read? id user)))
+    (if (= action "read")
+      (can? "read"  id user)
+      (can? "write" id user))))
+
+(def can-read?  #(check-permissions "read"  %))
+(def can-write? #(check-permissions "write" %))
 
 (def access-rules
   [{:uri    "/events/:id"
-    :handler {:and [authenticated? read-handler]}}
+    :handler {:and [authenticated? can-read?]}}
 
    {:uri "/events/:id/*"
     :handler {:and [authenticated? can-write?]}}
