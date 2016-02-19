@@ -5,14 +5,15 @@
     [sempro.models.event :as m]
     [sempro.utils.error  :as err]))
 
-(defn create [req]
+(defn create [req user]
   "`req` must be a map with an event
   tries to validate the req and returns:
    > ok  response if event is valid
    > bad response if not, with error msg in body
   if a exception is thrown also returns bad response"
   (try
-    (let [parsed (m/create req)
+    (let [permissions {:can_read user :can_write user}
+          parsed (m/create (merge req permissions))
           valid? (first parsed)
           body (second parsed)]
       (if valid?
@@ -63,7 +64,7 @@
 (defn can?
   [action event-id user]
   (let [permissions (m/get-permissions event-id)
-        can-read?  (some #(= % user) (clojure.string/split (:can_read permissions)  #" "))
+        can-read?  (some #(= % user) (clojure.string/split (:can_read  permissions) #" "))
         can-write? (some #(= % user) (clojure.string/split (:can_write permissions) #" "))]
     (cond
       (= action "read")  can-read?

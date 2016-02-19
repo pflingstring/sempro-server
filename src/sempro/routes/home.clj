@@ -25,7 +25,8 @@
   (GET "/events"     []   (event/get-all))
   (GET "/events/:id" [id] (event/get-id id))
 
-  (POST "/events"            req        (event/create (:params req)))
+  (POST "/events"            req        (event/create (:params req)
+                                                      (get-in req [:identity :email])))
   (POST "/events/:id/delete" [id]       (event/delete-id    id))
   (POST "/events/:id/update" [id & req] (event/update-event id req)))
 

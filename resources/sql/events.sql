@@ -1,8 +1,8 @@
 -- name: create-event<!
 -- creates a new event record
 INSERT INTO events
-       (name  , description , date)
-VALUES (:name, :description, :date)
+       (name  , description , date , can_read , can_write)
+VALUES (:name, :description, :date, :can_read, :can_write)
 
 -- name: get-event
 -- retrieve event given the id
