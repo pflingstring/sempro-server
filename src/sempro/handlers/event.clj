@@ -3,7 +3,8 @@
     [ring.util.http-response :refer [ok bad-request]]
     [sempro.utils.response   :refer [create-response]]
     [sempro.models.event :as m]
-    [sempro.utils.error  :as err]))
+    [sempro.utils.error  :as err]
+    [buddy.auth :refer [authenticated?]]))
 
 (defn create [req user]
   "`req` must be a map with an event
@@ -22,10 +23,10 @@
     (catch Exception e
       (create-response bad-request (err/sql-exception (.getMessage e))))))
 
-(defn get-all []
+(defn get-all [user]
   "returns an ok response with all events
   if there are any"
-  (let [events (m/get-all)]
+  (let [events (filter #(= (:can_read %) user) (m/get-all))]
     (if-not (empty? events)
       (create-response ok events)
       (create-response bad-request (err/not-found "no events found")))))
@@ -64,8 +65,8 @@
 (defn can?
   [action event-id user]
   (let [permissions (m/get-permissions event-id)
-        can-read?  (some #(= % user) (clojure.string/split (:can_read  permissions) #" "))
-        can-write? (some #(= % user) (clojure.string/split (:can_write permissions) #" "))]
+        can-read?  (boolean (some #(= % user) (clojure.string/split (:can_read permissions)  #" ")))
+        can-write? (boolean (some #(= % user) (clojure.string/split (:can_write permissions) #" ")))]
     (cond
       (= action "read")  can-read?
       (= action "write") can-write?)))
@@ -73,13 +74,17 @@
 (def can-read?  #(can? "read"  %1 %2))
 (def can-write? #(can? "write" %1 %2))
 
-(defn restricted [req]
-  (let [user  (get-in req [:identity :email])
-        event (get-in req [:params :id])]
-    (if (can-read? event user)
-      (get-id event)
-      (create-response bad-request (err/not-found "access denied")))))
+(defn read-handler
+  [req]
+  (let [id   (get-in req [:match-params :id])
+        user (get-in req [:identity :email])]
+    (println id user)
+    (can-read? id user)))
 
 (def access-rules
-  [{:uri "/events/:id"
-    :handler restricted}])
+  [{:uri    "/events/:id"
+    :handler {:and [authenticated? read-handler]}}
+
+   {:uri "/events/:id/*"
+    :handler {:and [authenticated? can-write?]}}
+   ])

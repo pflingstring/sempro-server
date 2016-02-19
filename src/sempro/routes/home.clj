@@ -6,6 +6,8 @@
 
     [ring.util.http-response :refer [ok bad-request!]]
     [compojure.core :refer [defroutes context GET POST]]
+
+    [buddy.auth.accessrules :refer [restrict]]
     ))
 
 (defroutes home-routes
@@ -18,15 +20,13 @@
   (POST "/user/:id/update/status" [id status] (user/update-status id status))
   (POST "/user/:id/update/job"    [id job]    (user/update-job    id job)))
 
-(defroutes restricted
-  (GET "/restricted/:id" req (event/restricted req)))
-
 (defroutes event-routes
-  (GET "/events"     []   (event/get-all))
-  (GET "/events/:id" [id] (event/get-id id))
+  (GET "/events"     req (event/get-all (get-in req [:identity :email])))
+  (GET "/events/:id" req (event/get-id  (get-in req [:params :id])))
 
-  (POST "/events"            req        (event/create (:params req)
-                                                      (get-in req [:identity :email])))
+  (POST "/events" req (event/create (:params req) (get-in req [:identity :email])))
+
   (POST "/events/:id/delete" [id]       (event/delete-id    id))
-  (POST "/events/:id/update" [id & req] (event/update-event id req)))
+  (POST "/events/:id/update" [id & req] (event/update-event id req))
+  )
 

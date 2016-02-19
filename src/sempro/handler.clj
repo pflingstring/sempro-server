@@ -41,7 +41,6 @@
     home-routes
     user-routes
     event-routes
-    restricted
     (route/not-found
       (response/bad-request "not found"))))
 
