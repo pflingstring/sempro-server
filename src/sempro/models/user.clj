@@ -47,6 +47,14 @@
 ;;
 ;; user status and jobs
 ;;
+(defn set-status [id status]
+  (let [status {:id id :status status}]
+    (db/set-user-status! status)))
+
+(defn set-job [id job]
+  (let [job {:id id :job job}]
+    (db/set-user-job! job)))
+
 (def status
   {:fux "Fux"
    :AB  "ABursch"
@@ -69,10 +77,19 @@
    :VD  "Vergnugungsdirektor"
    :KD  "Keildirektor"})
 
-(defn set-status [id status]
-  (let [status {:id id :status status}]
-    (db/set-user-status! status)))
+(defn get-users-by-status [status]
+  (db/get-users-by-status {:status status}))
 
-(defn set-job [id job]
-  (let [job {:id id :job job}]
-    (db/set-user-job! job)))
+(def get-fuxe      (get-users-by-status (:fux status)))
+(def get-aburschen (get-users-by-status (:AB  status)))
+(def get-iburschen (get-users-by-status (:IAB status)))
+(def get-auswertig (get-users-by-status (:AUS status)))
+(def get-alteherrn (get-users-by-status (:AH  status)))
+
+(def get-aktivitas (concat get-fuxe
+                           get-aburschen
+                           get-iburschen))
+
+(def get-everyone (concat get-aktivitas
+                          get-auswertig
+                          get-alteherrn))

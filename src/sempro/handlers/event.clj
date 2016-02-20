@@ -63,7 +63,6 @@
   (let [readers (:readers req)
         writers (:writers req)
         added? (type id readers writers)]
-    (println (str "READERS:\n" readers "\n\nWRITERS\n" writers))
     (if added?
       (create-response ok {:added true})
       (create-response bad-request (err/error-body "no permission added")))))
