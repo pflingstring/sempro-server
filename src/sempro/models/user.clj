@@ -54,13 +54,14 @@
    :AUS "Auswertiger"
    :AH  "Alter Herr"})
 
-(def jobs
+(def bosses
   {:X   "ErstX"
    :XX  "ZweitX"
    :XXX "DrittX"
-   :FM  "FuxMajor"
-   ;; Aemter
-   :BKW "Bierwart"
+   :FM  "FuxMajor"})
+
+(def jobs
+  {:BKW "Bierwart"
    :HKW "Hauptkasse"
    :SW  "Sportwart"
    :CW  "Coleurwart"

@@ -49,12 +49,6 @@
     (create-response ok (:identity request))
     (throw-unauthorized "Must be authorized")))
 
-(defn restricted []
-  "`request` must be a ring request
-  only returns ok if the request is authenticated
-  authentication is checked by access-list"
-  (create-response ok {:message "RESTRICTED"}))
-
 (defn update-status [id status]
   (let [updated? (m/set-status id status)]
     (if (= 1 updated?)
@@ -63,7 +57,18 @@
 
 (defn update-job [id job]
   (let [updated? (m/set-job id job)]
-    (println id "  " job)
     (if (= 1 updated?)
       (create-response ok {:updated true})
       (create-response bad-request (err/not-found "id not found")))))
+
+;;
+;; Access rules
+;;
+(defn is-boss? [req]
+  (let [user (first (db/get-user-by-email (:identity req)))
+        job  (:job user)]
+    (boolean (some #(= job %) (vals m/bosses)))))
+
+(def access-rules
+  [{:uri "/user/:id/update/*"
+    :handler is-boss?}])
