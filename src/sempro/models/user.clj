@@ -80,16 +80,18 @@
 (defn get-users-by-status [status]
   (db/get-users-by-status {:status status}))
 
-(def get-fuxe      (get-users-by-status (:fux status)))
-(def get-aburschen (get-users-by-status (:AB  status)))
-(def get-iburschen (get-users-by-status (:IAB status)))
-(def get-auswertig (get-users-by-status (:AUS status)))
-(def get-alteherrn (get-users-by-status (:AH  status)))
+(defn get-fuxe      [] (get-users-by-status (:fux status)))
+(defn get-aburschen [] (get-users-by-status (:AB  status)))
+(defn get-iburschen [] (get-users-by-status (:IAB status)))
+(defn get-auswertig [] (get-users-by-status (:AUS status)))
+(defn get-alteherrn [] (get-users-by-status (:AH  status)))
 
-(def get-aktivitas (concat get-fuxe
-                           get-aburschen
-                           get-iburschen))
+(defn get-aktivitas []
+  (concat get-fuxe
+          get-aburschen
+          get-iburschen))
 
-(def get-everyone (concat get-aktivitas
-                          get-auswertig
-                          get-alteherrn))
+(defn get-everyone []
+  (concat get-aktivitas
+          get-auswertig
+          get-alteherrn))
