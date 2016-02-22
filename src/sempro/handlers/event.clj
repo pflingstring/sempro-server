@@ -4,6 +4,8 @@
     [sempro.utils.response   :refer [create-response]]
     [sempro.models.event :as m]
     [sempro.utils.error  :as err]
+    [clojure.string      :as str]
+    [sempro.models.user  :as user-m]
     [buddy.auth :refer [authenticated?]]))
 
 (defn create [req user]
@@ -70,14 +72,30 @@
 (def update-permissions #(change-permissions m/update-permissions %1 %2))
 (def add-permissions    #(change-permissions m/add-permissions    %1 %2))
 
+;; TODO: don't add duplicates in DB
+(defn add-group-permissions
+  [id group req]
+  (let [users (cond (= group "fuxe")     user-m/get-fuxe
+                    (= group "aktivitas" user-m/get-aktivitas)
+                    (= group "everyone"  user-m/get-everyone))
+        emails (str/join " " (map :email (users)))
+        can-read?  (not (empty? (:readers req)))
+        can-write? (not (empty? (:writers req)))]
+    (cond
+      (and can-read?
+           can-write?)   (add-permissions id {:readers emails :writers emails})
+      (true? can-read?)  (add-permissions id {:readers emails :writers ""})
+      (true? can-write?) (add-permissions id {:readers "" :writers emails})
+      :else (create-response bad-request (err/error-body "you must choose one")))))
+
 ;;
 ;; Access rules
 ;;
 (defn can?
   [action event-id user]
   (let [permissions (m/get-permissions event-id)
-        can-read?  (boolean (some #(= % user) (clojure.string/split (:can_read permissions)  #" ")))
-        can-write? (boolean (some #(= % user) (clojure.string/split (:can_write permissions) #" ")))]
+        can-read?  (boolean (some #(= % user) (str/split (:can_read  permissions) #" ")))
+        can-write? (boolean (some #(= % user) (str/split (:can_write permissions) #" ")))]
     (cond
       (= action "read")  can-read?
       (= action "write") can-write?)))

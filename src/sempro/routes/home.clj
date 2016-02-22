@@ -30,6 +30,7 @@
   (POST "/events/:id/update" [id & req] (event/update-event id req))
 
   (POST "/events/:id/permissions/add"    [id & req] (event/add-permissions    id req))
+  (POST "/events/:id/permissions/add/:group" [id group & req] (event/add-group-permissions id group req))
   (POST "/events/:id/permissions/update" [id & req] (event/update-permissions id req))
   )
 
