@@ -18,9 +18,10 @@
 (def update-validators (conj create-validators
                              info-validator))
 
-(defn validate-event [event type validators]
+(defn validate-event
   "`event` must be a map
   `type` can be either `b/valid?` or `b/validate`"
+  [event type validators]
   (map #(% type event) validators))
 
 (defn is-valid? [event validators]
@@ -33,22 +34,24 @@
   (into {} (filter #(not (nil? %))
                    (map first parsed))))
 
-(defn validate [event validators]
+(defn validate
   "`event` must be a map
   returns a vector with 2 elements
   the first element is `nil` if event is valid i.e no errors
     else it contains a map with the validation errors
   the second argument is the `event` itself"
+  [event validators]
   (if (is-valid? event validators)
     [nil event]
     [(get-errors (validate-event event b/validate validators))]))
 
-(defn create [event]
+(defn create
   "`event` must be a map
   creates a new event in DB
   returns a vector with 2 elements [bool, {map}]
   if event is valid: [true, {user}]
   else:              [false, {validation-errors}]"
+  [event]
   (let [parsed (validate event create-validators)
         errors (first  parsed)
         event  (second parsed)]
@@ -57,29 +60,33 @@
           [true event])
       [false {:error {:input-validation errors}}])))
 
-(defn get-id [id]
+(defn get-id
   "id must be an Integer
   returns a map with the required id"
+  [id]
   (first (db/get-event {:id id})))
 
-(defn get-all []
+(defn get-all
   "returns a LazySeq with all events"
+  []
   (db/get-all-events))
 
-(defn delete [id]
+(defn delete
   "id must be an Integer
   deletes the event with the given ID from DB
   returns the number of deleted rows
   i.e:  0 if nothing was deleted,
         1 otherwise"
+  [id]
   (db/delete-event! {:id id}))
 
-(defn update-event [id event]
+(defn update-event
   "`event` must be a map
   updates the event with givend ID
   returns a vector with 2 elements [bool, {map}]
   if event is valid: [true, {user}]
   else:              [false, {validation-errors}]"
+  [id event]
   (let [parsed (validate event update-validators)
         errors (first  parsed)
         event  (merge {:id id} (second parsed))]

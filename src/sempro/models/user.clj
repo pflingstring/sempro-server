@@ -6,34 +6,38 @@
     [buddy.hashers  :as hashers]))
 
 (def hashing-options {:alg :pbkdf2+sha256 :salt "salatic"})
-(defn hash-pass [password]
+(defn hash-pass
   "hash and salt pass for storage in DB"
+  [password]
   (hashers/encrypt password hashing-options))
 
-(defn password-matches? [email password]
+(defn password-matches?
   "hashes the password and matches it agains the email"
+  [email password]
   (let [hashed-pass (-> {:email email}
                         (db/get-user-by-email)
                         (first)
                         (get :pass))]
     (hashers/check password hashed-pass)))
 
-(defn validate [user]
+(defn validate
   "`user` must be a map
   returns a vector with 2 elements
   the first argument is `nil` if user is valid
   else it is a map with the errors"
+  [user]
   (b/validate user                                          ; TODO: add better validation
     :first_name v/required                                  ; may contain only letters
     :last_name  v/required
     :email [v/email     v/required]
     :pass  [v/required [v/min-count 6]]))
 
-(defn create [user]
+(defn create
   "`user` must be a map
   returns a vector with 2 elements [bool, {map}]
   if user is valid: [true, {user}]
   else:             [false, {validation-errors}]"
+  [user]
   (let [parsed (validate user)
         errors (first  parsed)
         user   (second parsed)]

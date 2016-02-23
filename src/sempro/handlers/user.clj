@@ -9,12 +9,13 @@
     [sempro.db.core :as db])
   (:import (java.sql SQLException)))
 
-(defn create [req]
+(defn create
   "`req` must be a map with an user
   tries to validate the req and returns:
    > ok  response if user is valid
    > bad response if not, with error msg in body
   if a exception is thrown also returns bad response"
+  [req]
   (try
     (let [parsed (m/create req)
           valid? (first parsed)
@@ -27,11 +28,12 @@
     (catch Exception e
       (create-response bad-request (err/sql-exception (.getMessage e))))))
 
-(defn login [request]
+(defn login
   "`request` must be a map with :email and :pass keys
   checks if the credentials are valid and returns:
    > ok  response with the auth-token body
    > bad response if not"
+  [request]
   (let [pass  (:pass request)
         email (assoc {} :email (:email request))                            ; TODO: validate email
         user  (first (db/get-user-by-email email))
@@ -40,22 +42,25 @@
       (create-response ok (str "Token " token))
       (create-response bad-request {:error "login error"}))))
 
-(defn home [request]
+(defn home
   "`request` must be a ring request
   checks if the request is authenticated and returns:
    > ok  response with users email
    > throws an exception otherwise"
+  [request]
   (if (authenticated? request)
     (create-response ok (:identity request))
     (throw-unauthorized "Must be authorized")))
 
-(defn update-status [id status]
+(defn update-status
+  [id status]
   (let [updated? (m/set-status id status)]
     (if (= 1 updated?)
       (create-response ok {:updated true})
       (create-response bad-request (err/not-found "id not found")))))
 
-(defn update-job [id job]
+(defn update-job
+  [id job]
   (let [updated? (m/set-job id job)]
     (if (= 1 updated?)
       (create-response ok {:updated true})
@@ -64,7 +69,8 @@
 ;;
 ;; Access rules
 ;;
-(defn is-boss? [req]
+(defn is-boss?
+  [req]
   (let [user (first (db/get-user-by-email (:identity req)))
         job  (:job user)]
     (boolean (some #(= job %) (vals m/bosses)))))

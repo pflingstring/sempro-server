@@ -8,12 +8,13 @@
     [sempro.models.user  :as user-m]
     [buddy.auth :refer [authenticated?]]))
 
-(defn create [req user]
+(defn create
   "`req` must be a map with an event
   tries to validate the req and returns:
    > ok  response if event is valid
    > bad response if not, with error msg in body
   if a exception is thrown also returns bad response"
+  [req user]
   (try
     (let [permissions {:can_read user :can_write user}
           parsed (m/create (merge req permissions))
@@ -25,35 +26,39 @@
     (catch Exception e
       (create-response bad-request (err/sql-exception (.getMessage e))))))
 
-(defn get-all [user]
+(defn get-all
   "returns an ok response with all events
   if there are any"
+  [user]
   (let [events (filter #(.contains (:can_read %) user) (m/get-all))]
     (if-not (empty? events)
       (create-response ok events)
       (create-response bad-request (err/not-found "no events found")))))
 
-(defn get-id [id]
+(defn get-id
   "`id` must be an Integer
   returns an ok response with the given id
   if id is not nil"
+  [id]
   (let [event (m/get-id id)]
     (if-not (nil? event)
       (create-response ok event)
       (create-response bad-request (err/not-found "id not found")))))
 
-(defn delete-id [id]
+(defn delete-id
   "`id` must be an Integer
   returns an ok response if event is deleted"
+  [id]
   (let [deleted? (m/delete id)]
     (if (= 1 deleted?)
       (create-response ok {:deleted true})
       (create-response bad-request (err/not-found "id not found")))))
 
-(defn update-event [id req]
+(defn update-event
   "`id` must be an Integer
   `req` must be a full event map
     i.e. must contains all fields"
+  [id req]
   (let [parsed (m/update-event id req)
         valid? (first parsed)
         body  (second parsed)]
@@ -61,7 +66,8 @@
       (create-response ok body)
       (create-response bad-request body))))
 
-(defn change-permissions [type id req]
+(defn change-permissions
+  [type id req]
   (let [readers (:readers req)
         writers (:writers req)
         added? (type id readers writers)]
