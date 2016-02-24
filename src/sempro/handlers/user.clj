@@ -53,6 +53,7 @@
     (throw-unauthorized "Must be authorized")))
 
 (defn update-status
+  "updates user-status for given ID"
   [id status]
   (let [updated? (m/set-status id status)]
     (if (= 1 updated?)
@@ -60,6 +61,7 @@
       (create-response bad-request (err/not-found "id not found")))))
 
 (defn update-job
+  "updates user-job for given ID"
   [id job]
   (let [updated? (m/set-job id job)]
     (if (= 1 updated?)

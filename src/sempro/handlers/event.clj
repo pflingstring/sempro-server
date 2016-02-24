@@ -27,13 +27,14 @@
       (create-response bad-request (err/sql-exception (.getMessage e))))))
 
 (defn get-all
-  "returns an ok response with all events
-  if there are any"
+  "if user is not logged in returns error
+  returns an ok response with all events
+  the user has read-permission, if there are any"
   [user]
   (if-not (nil? user)
-    (let [events (m/get-all)
-          allowed (when-not (nil? events)
-                    (filter #(.contains (:can_read %) user) events))]
+    (let [events  (m/get-all)
+          allowed (-> #(.contains (:can_read %) user)
+                      (filter events))]
       (if-not (empty? allowed)
         (create-response ok allowed)
         (create-response bad-request (err/not-found "no events found"))))
@@ -71,10 +72,13 @@
       (create-response bad-request body))))
 
 (defn change-permissions
-  [type id req]
+  "`fn` must be a function which adds/updates permissions
+  `id`  must be an Integer, represents the event's ID
+  `req` must be a map with permissions to add/update"
+  [fn id req]
   (let [readers (:readers req)
         writers (:writers req)
-        added? (type id readers writers)]
+        added? (fn id readers writers)]
     (if added?
       (create-response ok {:added true})
       (create-response bad-request (err/error-body "no permission added")))))
@@ -84,6 +88,10 @@
 
 ;; TODO: don't add duplicates in DB
 (defn add-group-permissions
+  "adds permissions based on user-group
+  `id` must be an Integer, represend event's ID
+  `group` represents a user-group
+  `req` is a map containing permissions to be added"
   [id group req]
   (let [users (cond (= group "fuxe")     user-m/get-fuxe
                     (= group "aktivitas" user-m/get-aktivitas)
@@ -96,22 +104,25 @@
            can-write?)   (add-permissions id {:readers emails :writers emails})
       (true? can-read?)  (add-permissions id {:readers emails :writers ""})
       (true? can-write?) (add-permissions id {:readers "" :writers emails})
-      :else (create-response bad-request (err/error-body "you must choose one")))))
+      :else (create-response bad-request (err/error-body "you must choose at least one")))))
 
 ;;
 ;; Access rules
 ;;
 (defn can?
+  "checks if the given `user` has permission to read/write an event
+  `action` must be either 'read' or 'write'"
   [action event-id user]
   (let [permissions (m/get-permissions event-id)]
     (if-not (nil? permissions)
-      (let [can-read?  (boolean (some #(= % user) (str/split (:can_read permissions)  #" ")))
+      (let [can-read?  (boolean (some #(= % user) (str/split (:can_read  permissions) #" ")))
             can-write? (boolean (some #(= % user) (str/split (:can_write permissions) #" ")))]
         (cond (= action "read")  can-read?
               (= action "write") can-write?))
       false)))
 
 (defn check-permissions
+  "`req` must be a ring-request"
   [action req]
   (let [id   (get-in req [:match-params :id])
         user (get-in req [:identity :email])]

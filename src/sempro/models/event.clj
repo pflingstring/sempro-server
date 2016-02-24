@@ -11,26 +11,31 @@
 (def dscr-validator #(%1 %2 :description [v/string v/required]))
 (def info-validator #(%1 %2 :info [v/string v/required]))
 
+;; validators needed when creating an event
 (def create-validators [name-validator
                         dscr-validator
                         date-validator])
 
+;; validators needed when updating an event
 (def update-validators (conj create-validators
                              info-validator))
 
 (defn validate-event
   "`event` must be a map
-  `type` can be either `b/valid?` or `b/validate`"
-  [event type validators]
-  (map #(% type event) validators))
+  `fn` can be either `b/valid?` or `b/validate`"
+  [event fn validators]
+  (map #(% fn event) validators))
 
-(defn is-valid? [event validators]
+(defn is-valid?
+  [event validators]
   (->> (validate-event event b/valid? validators)
        (some #(= false %))
        (boolean)
        (not)))
 
-(defn get-errors [parsed]
+(defn get-errors
+  "returs validation errors"
+  [parsed]
   (into {} (filter #(not (nil? %))
                    (map first parsed))))
 
@@ -100,6 +105,8 @@
   (first (db/get-event-permissions {:id id})))
 
 (defn update-permissions
+  "updates permissions for given ID
+  note that it will replace the existing permissions"
   [id readers writers]
   (db/update-event-permissions!
     {:id        id
@@ -107,6 +114,7 @@
      :writers writers}))
 
 (defn add-permissions
+  "adds permisions for given ID"
   [id readers writers]
   (db/add-event-permissions!
     {:id id
