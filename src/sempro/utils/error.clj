@@ -14,3 +14,7 @@
 (def sql-exception
   #(-> (assoc {} :exception %)
        (error-body)))
+
+(def access-denied
+  #(-> (assoc {} :not-authorized %)
+       (error-body)))

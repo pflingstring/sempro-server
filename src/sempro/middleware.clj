@@ -29,9 +29,9 @@
       ((if (:websocket? request) handler wrapped) request))))
 
 (defn on-error [request response]
-  {:status 403
-   :headers {"Content-Type" "text/plain"}
-   :body (str "Acces to " (:uri request) " is not authorized")})
+  (sempro.utils.response/create-response
+    ring.util.http-response/forbidden
+    (sempro.utils.error/access-denied (str "Access to " (:uri request) " is not authorized"))))
 
 (def all-rules
   (concat

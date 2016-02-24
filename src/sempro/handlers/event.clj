@@ -1,6 +1,6 @@
 (ns sempro.handlers.event
   (:require
-    [ring.util.http-response :refer [ok bad-request]]
+    [ring.util.http-response :refer [ok bad-request forbidden]]
     [sempro.utils.response   :refer [create-response]]
     [sempro.models.event :as m]
     [sempro.utils.error  :as err]
@@ -30,10 +30,14 @@
   "returns an ok response with all events
   if there are any"
   [user]
-  (let [events (filter #(.contains (:can_read %) user) (m/get-all))]
-    (if-not (empty? events)
-      (create-response ok events)
-      (create-response bad-request (err/not-found "no events found")))))
+  (if-not (nil? user)
+    (let [events (m/get-all)
+          allowed (when-not (nil? events)
+                    (filter #(.contains (:can_read %) user) events))]
+      (if-not (empty? allowed)
+        (create-response ok allowed)
+        (create-response bad-request (err/not-found "no events found"))))
+    (create-response forbidden (err/access-denied "You must be logged in"))))
 
 (defn get-id
   "`id` must be an Integer
@@ -99,12 +103,13 @@
 ;;
 (defn can?
   [action event-id user]
-  (let [permissions (m/get-permissions event-id)
-        can-read?  (boolean (some #(= % user) (str/split (:can_read  permissions) #" ")))
-        can-write? (boolean (some #(= % user) (str/split (:can_write permissions) #" ")))]
-    (cond
-      (= action "read")  can-read?
-      (= action "write") can-write?)))
+  (let [permissions (m/get-permissions event-id)]
+    (if-not (nil? permissions)
+      (let [can-read?  (boolean (some #(= % user) (str/split (:can_read permissions)  #" ")))
+            can-write? (boolean (some #(= % user) (str/split (:can_write permissions) #" ")))]
+        (cond (= action "read")  can-read?
+              (= action "write") can-write?))
+      false)))
 
 (defn check-permissions
   [action req]

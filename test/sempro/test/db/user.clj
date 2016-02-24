@@ -14,10 +14,12 @@
 ;;
 (defn new-user-req [body]
   (-> (u/post-req "/user/create" body)
+      (sempro.handler/app)
       (u/dissoc-headers)))
 
 (defn login-req [body]
   (-> (u/post-req "/login" body)
+      (sempro.handler/app)
       (u/dissoc-headers)))
 
 ;;
