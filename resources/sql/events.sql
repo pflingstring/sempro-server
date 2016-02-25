@@ -43,6 +43,11 @@ WHERE id = :id
 -- name: add-event-permissions!
 -- add permissions for given ID
 UPDATE events SET
-  can_read  = can_read  || " " || :readers,
-  can_write = can_write || " " || :writers
+  can_read  = CASE WHEN :readers != ""
+              THEN can_read  || " " || :readers
+              ELSE can_read END,
+
+  can_write = CASE WHEN :writers != ""
+              THEN can_write || " " || :writers
+              ELSE can_write END
 WHERE id = :id
