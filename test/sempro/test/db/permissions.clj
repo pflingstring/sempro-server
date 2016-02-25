@@ -99,5 +99,27 @@
               (harry-post "/events/3/delete" nil) => (u/access-denied "Access to /events/3/delete is not authorized")
               (rand-post  "/events/3/update" ankneipe) => (u/access-denied "Access to /events/3/update is not authorized")
               (harry-post "/events/3/update" ankneipe) => (u/access-denied "Access to /events/3/update is not authorized")))
+
+          (fact "write permissions"
+            (fact "rand gives write permission to harry"
+              (rand-post "/events/1/permissions/add"
+                         {:readers ""
+                          :writers (str (:email harry))}) => (u/ok-response {:added true})
+
+              (fact "remove read permission for gimli and write permission for harry"
+                (harry-post "/events/1/permissions/update"
+                            {:readers (str (:email rand) " " (:email harry))
+                             :writers (:email rand)}) => (u/ok-response {:added true})
+                (gimli-get "/events/1") => (u/access-denied "Access to /events/1 is not authorized")
+                (harry-get "/events/1") => (u/ok-response (update ankneipe :can_read #(str % " " (:email harry))))
+                (harry-post "/events/1/delete" nil) => (u/access-denied "Access to /events/1/delete is not authorized"))
+
+              (fact "harry removes read/write permissions"
+                (harry-post "/events/2/permissions/update"
+                            {:readers (:email harry)
+                             :writers (:email harry)}) => (u/ok-response {:added true})
+                (rand-get  "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
+                (gimli-get "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
+                (harry-get "/events/2") => (u/ok-response abkneipe))))
           ))
   )))
