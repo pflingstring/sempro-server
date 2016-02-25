@@ -11,7 +11,7 @@
    :description "Abkneipe der SS16"
    :date "2016-08-08T20:15"})
 
-(def ok-date
+(def party
   {:name "All you need is love"
    :description "and dates that pass the tests"
    :date "2015-10-10T10:10"})
@@ -30,8 +30,3 @@
 (def kaput-description
   {:name "A name is no good without description"
    :date "2000-11-01T22:22"})
-
-(def all-events
-  (merge ankneipe
-         abkneipe
-         ))

@@ -17,6 +17,14 @@
    :role nil
    :phone nil})
 
+(def gimli-user
+  {:first_name "Gimli"
+   :last_name "son of Gloin"
+   :email "gimli@my.axe"
+   :pass "mithril"
+   :role nil
+   :phone nil})
+
 (def kaput-email
   {:first_name "Helmut"
    :last_name  "Kaput"
