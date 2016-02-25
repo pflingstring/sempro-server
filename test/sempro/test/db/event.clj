@@ -16,8 +16,8 @@
             email (:email user)
             login-data {:email email :pass "elmindreda"}
             token (u/get-token login-data)
-            get-req #(u/dissoc-headers (u/authenticate-req (u/get-req %) token))
-            post-req #(u/dissoc-headers (u/authenticate-req (u/post-req %1 %2) token))
+            get-req  (u/create-request token :get)
+            post-req (u/create-request token :post)
             permissions {:can_read email :can_write email}]
 
         (fact "DB is empty"

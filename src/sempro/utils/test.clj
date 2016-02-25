@@ -27,6 +27,16 @@
 ;; response util
 (def dissoc-headers #(dissoc % :headers))
 
+(defn create-request
+  "create a custom request for a user
+  i.e. with different auth-tokens"
+  [token method]
+  (let [get-req  #(dissoc-headers (authenticate-req (get-req  %)     token))
+        post-req #(dissoc-headers (authenticate-req (post-req %1 %2) token))]
+    (cond
+      (= method :post) post-req
+      (= method :get)  get-req)))
+
 (defn error-response [error-type response-code]
   #(-> (error-type %)
        (json/generate-string)
