@@ -61,9 +61,14 @@
             (let [ankneipe (->> #(str % " " (:email gimli) " " (:email harry))
                                  (update ankneipe :can_read))]
 
-              (rand-post "/events/1/permissions/add"
-                         {:readers (str (:email gimli) " " (:email harry))
-                          :writers ""}) => (u/ok-response {:added true})
+              (fact "do not add duplicates"
+                (rand-post "/events/1/permissions/add"
+                          {:readers (str (:email gimli) " " (:email harry))
+                           :writers ""}) => (u/ok-response {:added true})
+                (rand-post "/events/1/permissions/add"
+                           {:readers (str (:email gimli) " " (:email harry))
+                            :writers ""})
+                (sempro.models.event/get-id 1) => ankneipe)
 
               (harry-get "/events/1") => (u/ok-response ankneipe)
               (gimli-get "/events/1") => (u/ok-response ankneipe)

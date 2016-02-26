@@ -78,12 +78,20 @@
   `id`  must be an Integer, represents the event's ID
   `req` must be a map with permissions to add/update"
   [fn id req]
-  (let [readers (:readers req)
-        writers (:writers req)
-        added? (fn id readers writers)]
+  (let [readers (when-not (empty? (:readers req)) (set (str/split (:readers req) #" ")))
+        writers (when-not (empty? (:writers req)) (set (str/split (:writers req) #" ")))
+        curr-perms (m/get-permissions id)
+        old-read  (set (str/split (:can_read  curr-perms) #" "))
+        old-write (set (str/split (:can_write curr-perms) #" "))
+        new-read  (str/join " " (distinct (concat old-read  readers)))
+        new-write (str/join " " (distinct (concat old-write writers)))
+        added? (if (= fn m/add-permissions)
+                 (m/update-permissions id new-read new-write)
+                 (fn id (str/join " " readers) (str/join " " writers)))]
     (if added?
       (create-response ok {:added true})
-      (create-response bad-request (err/error-body "no permission added")))))
+      (create-response bad-request (err/error-body "no permission added"))
+      )))
 
 (def update-permissions #(change-permissions m/update-permissions %1 %2))
 (def add-permissions    #(change-permissions m/add-permissions    %1 %2))
