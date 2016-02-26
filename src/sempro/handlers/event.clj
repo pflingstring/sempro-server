@@ -72,6 +72,7 @@
       (create-response bad-request body))))
 
 ;; TODO: handle NPE when req does not contain :readers & :writers key or null
+;;       add more info when successfully changed permission
 (defn change-permissions
   "`fn` must be a function which adds/updates permissions
   `id`  must be an Integer, represents the event's ID
@@ -87,7 +88,6 @@
 (def update-permissions #(change-permissions m/update-permissions %1 %2))
 (def add-permissions    #(change-permissions m/add-permissions    %1 %2))
 
-;; TODO: don't add duplicates in DB
 (defn add-group-permissions
   "adds permissions based on user-group
   `id` must be an Integer, represend event's ID
@@ -97,14 +97,19 @@
   (let [users (cond (= group "fuxe")     user-m/get-fuxe
                     (= group "aktivitas" user-m/get-aktivitas)
                     (= group "everyone"  user-m/get-everyone))
-        emails (str/join " " (map :email (users)))
         can-read?  (not (empty? (:readers req)))
-        can-write? (not (empty? (:writers req)))]
+        can-write? (not (empty? (:writers req)))
+        emails (map :email (users))
+        curr-perms (m/get-permissions id)
+        old-read  (set (str/split (:can_read  curr-perms) #" "))
+        old-write (set (str/split (:can_write curr-perms) #" "))
+        new-read  (str/join " " (distinct (concat old-read  emails)))
+        new-write (str/join " " (distinct (concat old-write emails)))]
     (cond
       (and can-read?
-           can-write?)   (add-permissions id {:readers emails :writers emails})
-      (true? can-read?)  (add-permissions id {:readers emails :writers ""})
-      (true? can-write?) (add-permissions id {:readers "" :writers emails})
+           can-write?)   (update-permissions id {:readers new-read :writers new-write})
+      (true? can-read?)  (update-permissions id {:readers new-read :writers (str/join " " old-write)})
+      (true? can-write?) (update-permissions id {:readers (str/join " " old-read) :writers new-write})
       :else (create-response bad-request (err/error-body "you must choose at least one")))))
 
 ;;

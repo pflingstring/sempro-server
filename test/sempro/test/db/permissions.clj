@@ -121,5 +121,20 @@
                 (rand-get  "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
                 (gimli-get "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
                 (harry-get "/events/2") => (u/ok-response abkneipe))))
+
+          (fact "group permissions"
+            (fact "harry gives permission to Fuxe"
+              (harry-post "/events/2/permissions/add/fuxe" nil) => (u/error "you must choose at least one")
+              (harry-post "/events/2/permissions/add/fuxe"
+                          {:readers "fuxe"
+                           :writers "fuxe"}) => (u/ok-response {:added true})
+
+              (let [permissions #(str % " " (:email rand) " " (:email gimli))
+                    abkneipe (-> abkneipe
+                                 (update :can_read  permissions)
+                                 (update :can_write permissions))]
+                (harry-get "/events/2") => (u/ok-response abkneipe)
+                (gimli-get "/events/2") => (u/ok-response abkneipe)
+                (rand-get  "/events/2") => (u/ok-response abkneipe))))
           ))
   )))
