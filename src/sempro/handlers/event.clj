@@ -71,7 +71,6 @@
       (create-response ok body)
       (create-response bad-request body))))
 
-;; TODO: handle NPE when req does not contain :readers & :writers key or null
 ;;       add more info when successfully changed permission
 (defn change-permissions
   "`fn` must be a function which adds/updates permissions

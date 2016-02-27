@@ -134,7 +134,7 @@
                           {:readers "fuxe"
                            :writers "fuxe"}) => (u/ok-response {:added true})
 
-              (let [permissions #(str % " " (:email rand) " " (:email gimli))
+              (let [permissions #(str (:email rand) " " (:email gimli) " " %)
                     abkneipe (-> abkneipe
                                  (update :can_read  permissions)
                                  (update :can_write permissions))]
