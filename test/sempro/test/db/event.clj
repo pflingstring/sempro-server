@@ -22,8 +22,8 @@
 
         (fact "DB is empty"
           (get-req "/events") => (u/not-found "no events found")
-          (get-req "/events/1") => (u/access-denied "Access to /events/1 is not authorized")
-          (post-req "/events/1/delete" nil) => (u/access-denied "Access to /events/1/delete is not authorized"))
+          (get-req "/events/1") => (u/access-denied "/events/1")
+          (post-req "/events/1/delete" nil) => (u/access-denied "/events/1/delete"))
 
         (fact "DB not empty"
           (let [ankneipe (merge {:id 1} res/ankneipe {:info ""} permissions)
@@ -38,7 +38,7 @@
             (fact "delete events"
               (post-req "/events/1/delete" nil) => (u/ok-response {:deleted true})
               (post-req "/events/2/delete" nil) => (u/ok-response {:deleted true})
-              (post-req "/events/3/delete" nil) => (u/access-denied "Access to /events/3/delete is not authorized"))
+              (post-req "/events/3/delete" nil) => (u/access-denied "/events/3/delete"))
             (get-req "/events") => (u/not-found "no events found")))
 
         (fact "input-validation"

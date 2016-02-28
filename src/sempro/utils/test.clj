@@ -47,7 +47,11 @@
 (def not-found (error-response err/not-found bad-request))
 (def sql-error (error-response err/sql-exception bad-request))
 (def input-error (error-response err/input-error bad-request))
-(def access-denied (error-response err/access-denied forbidden))
+
+(defn access-denied [url]
+  ((error-response err/access-denied forbidden)
+    (str "Access to " url " is not authorized")))
+
 
 (defn ok-response [body]
   (dissoc-headers (create-response ok body)))

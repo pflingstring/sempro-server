@@ -44,16 +44,16 @@
             (gimli-get "/events/3") => (u/ok-response party)
 
             (fact "only rand has access"
-              (harry-get "/events/1") => (u/access-denied "Access to /events/1 is not authorized")
-              (gimli-get "/events/1") => (u/access-denied "Access to /events/1 is not authorized"))
+              (harry-get "/events/1") => (u/access-denied "/events/1")
+              (gimli-get "/events/1") => (u/access-denied "/events/1"))
 
             (fact "only harry has access"
-              (rand-get  "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
-              (gimli-get "/events/2") => (u/access-denied "Access to /events/2 is not authorized"))
+              (rand-get  "/events/2") => (u/access-denied "/events/2")
+              (gimli-get "/events/2") => (u/access-denied "/events/2"))
 
             (fact "only gimli has access"
-              (rand-get  "/events/3") => (u/access-denied "Access to /events/3 is not authorized")
-              (harry-get "/events/3") => (u/access-denied "Access to /events/3 is not authorized"))))
+              (rand-get  "/events/3") => (u/access-denied "/events/3")
+              (harry-get "/events/3") => (u/access-denied "/events/3"))))
 
 
         (fact "peremission manipulation"
@@ -72,8 +72,8 @@
 
               (harry-get "/events/1") => (u/ok-response ankneipe)
               (gimli-get "/events/1") => (u/ok-response ankneipe)
-              (harry-post "/events/1/delete" nil) => (u/access-denied "Access to /events/1/delete is not authorized")
-              (gimli-post "/events/1/delete" nil) => (u/access-denied "Access to /events/1/delete is not authorized")))
+              (harry-post "/events/1/delete" nil) => (u/access-denied "/events/1/delete")
+              (gimli-post "/events/1/delete" nil) => (u/access-denied "/events/1/delete")))
 
           (fact "harry gives read permissions"
             (let [abkneipe (->> #(str % " " (:email rand) " " (:email gimli))
@@ -85,10 +85,10 @@
 
               (rand-get  "/events/2") => (u/ok-response abkneipe)
               (gimli-get "/events/2") => (u/ok-response abkneipe)
-              (rand-post  "/events/2/delete" nil) => (u/access-denied "Access to /events/2/delete is not authorized")
-              (gimli-post "/events/2/delete" nil) => (u/access-denied "Access to /events/2/delete is not authorized")
-              (rand-post  "/events/2/update" ankneipe) => (u/access-denied "Access to /events/2/update is not authorized")
-              (gimli-post "/events/2/update" ankneipe) => (u/access-denied "Access to /events/2/update is not authorized")))
+              (rand-post  "/events/2/delete" nil) => (u/access-denied "/events/2/delete")
+              (gimli-post "/events/2/delete" nil) => (u/access-denied "/events/2/delete")
+              (rand-post  "/events/2/update" ankneipe) => (u/access-denied "/events/2/update")
+              (gimli-post "/events/2/update" ankneipe) => (u/access-denied "/events/2/update")))
 
           (fact "gimli gives read permissions"
             (let [party (->> #(str % " " (:email rand) " " (:email harry))
@@ -100,10 +100,10 @@
 
               (rand-get  "/events/3") => (u/ok-response party)
               (harry-get "/events/3") => (u/ok-response party)
-              (rand-post  "/events/3/delete" nil) => (u/access-denied "Access to /events/3/delete is not authorized")
-              (harry-post "/events/3/delete" nil) => (u/access-denied "Access to /events/3/delete is not authorized")
-              (rand-post  "/events/3/update" ankneipe) => (u/access-denied "Access to /events/3/update is not authorized")
-              (harry-post "/events/3/update" ankneipe) => (u/access-denied "Access to /events/3/update is not authorized")))
+              (rand-post  "/events/3/delete" nil) => (u/access-denied "/events/3/delete")
+              (harry-post "/events/3/delete" nil) => (u/access-denied "/events/3/delete")
+              (rand-post  "/events/3/update" ankneipe) => (u/access-denied "/events/3/update")
+              (harry-post "/events/3/update" ankneipe) => (u/access-denied "/events/3/update")))
 
           (fact "write permissions"
             (fact "rand gives write permission to harry"
@@ -115,16 +115,16 @@
                 (harry-post "/events/1/permissions/update"
                             {:readers (str (:email rand) " " (:email harry))
                              :writers (:email rand)}) => (u/ok-response {:added true})
-                (gimli-get "/events/1") => (u/access-denied "Access to /events/1 is not authorized")
+                (gimli-get "/events/1") => (u/access-denied "/events/1")
                 (harry-get "/events/1") => (u/ok-response (update ankneipe :can_read #(str % " " (:email harry))))
-                (harry-post "/events/1/delete" nil) => (u/access-denied "Access to /events/1/delete is not authorized"))
+                (harry-post "/events/1/delete" nil) => (u/access-denied "/events/1/delete"))
 
               (fact "harry removes read/write permissions"
                 (harry-post "/events/2/permissions/update"
                             {:readers (:email harry)
                              :writers (:email harry)}) => (u/ok-response {:added true})
-                (rand-get  "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
-                (gimli-get "/events/2") => (u/access-denied "Access to /events/2 is not authorized")
+                (rand-get  "/events/2") => (u/access-denied "/events/2")
+                (gimli-get "/events/2") => (u/access-denied "/events/2")
                 (harry-get "/events/2") => (u/ok-response abkneipe))))
 
           (fact "group permissions"
