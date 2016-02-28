@@ -1,20 +1,13 @@
 (ns sempro.utils.error)
 
-(def error-body
-  #(assoc {} :error %))
+(def error-body #(assoc {} :error %))
 
-(def input-error
-  #(-> (assoc {} :input-validation %)
+(defn make-error
+  [type]
+  #(-> (assoc {} type %)
        (error-body)))
 
-(def not-found
-  #(-> (assoc {} :not-found %)
-       (error-body)))
-
-(def sql-exception
-  #(-> (assoc {} :exception %)
-       (error-body)))
-
-(def access-denied
-  #(-> (assoc {} :not-authorized %)
-       (error-body)))
+(def not-found     (make-error :not-found))
+(def sql-exception (make-error :exception))
+(def access-denied (make-error :not-authorized))
+(def input-error   (make-error :input-validation))
