@@ -25,8 +25,10 @@
 ;;
 ;; TESTS
 ;;
+(mount.core/start)
 (conman.core/with-transaction [t-conn db/conn]
   (jdbc/db-set-rollback-only! t-conn)
+  (clojure.test/deftest users
   (fact "..:: USER ::.."
 
     (facts "using models.user"
@@ -69,4 +71,4 @@
               (login-req wrong-pass)  => (u/error "login error"))
             (fact "successfully authenticate the user"
                 (auth/unsign-token (u/get-token user-info)) => (assoc {} :email (:email user)))))))
-    ))
+    )))

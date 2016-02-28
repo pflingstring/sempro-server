@@ -7,8 +7,10 @@
     [sempro.db.core      :as db]
     [midje.sweet :refer  :all]))
 
+(mount.core/start)
 (conman.core/with-transaction [t-conn db/conn]
   (jdbc/db-set-rollback-only! t-conn)
+  (clojure.test/deftest events
   (fact "..:: EVENTS ::.."
 
     (fact "using the handlers"
@@ -44,4 +46,4 @@
         (fact "input-validation"
           (post-req "/events" res/kaput-date) => (u/input-error {:date '("date must be a valid date")})
           (post-req "/events" res/kaput-name) => (u/input-error {:name '("name must be present")})
-          (post-req "/events" res/kaput-description) => (u/input-error {:description '("description must be present")}))))))
+          (post-req "/events" res/kaput-description) => (u/input-error {:description '("description must be present")})))))))

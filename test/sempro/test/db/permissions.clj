@@ -9,6 +9,7 @@
     [midje.sweet :refer :all]
   ))
 
+(mount.core/start)
 (conman.core/with-transaction [t-conn db/conn]
   (jdbc/db-set-rollback-only! t-conn)
 
@@ -25,6 +26,7 @@
         harry-post (u/create-request harry-token :post)
         gimli-post (u/create-request gimli-token :post)]
 
+    (clojure.test/deftest permissions
     (fact "..:: PERMISSIONS ::.."
       (let [ankneipe (merge {:id 1} eres/ankneipe {:info ""}
                             {:can_read  (:email rand) :can_write (:email rand)})
@@ -142,4 +144,4 @@
                 (gimli-get "/events/2") => (u/ok-response abkneipe)
                 (rand-get  "/events/2") => (u/ok-response abkneipe))))
           ))
-  )))
+  ))))

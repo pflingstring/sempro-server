@@ -44,7 +44,8 @@
   :migratus {:store :database}
 
   :plugins [[lein-environ "1.0.1"]
-            [migratus-lein "0.2.1"]]
+            [migratus-lein "0.2.1"]
+            [lein-cloverage "1.0.6"]]
   :profiles
   {:uberjar {:omit-source true
              :env {:production true}
