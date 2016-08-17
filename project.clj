@@ -10,30 +10,30 @@
    [org.clojure/clojure "1.8.0"]
 
    ;; ring
-   [ring "1.4.0" :exclusions [ring/ring-jetty-adapter]]
-   [metosin/ring-http-response "0.6.5"]
+   [ring "1.5.0" :exclusions [ring/ring-jetty-adapter]]
+   [metosin/ring-http-response "0.8.0"]
    [ring-middleware-format "0.7.0"]
-   [ring/ring-defaults "0.1.5"]
+   [ring/ring-defaults "0.2.1"]
 
    ;; luminus
-   [luminus-http-kit "0.1.1"]
-   [luminus-nrepl "0.1.2"]
-   [luminus-log4j "0.1.2"]
-   [luminus/config "0.5"]
+   [luminus-http-kit "0.1.4"]
+   [luminus-nrepl "0.1.3"]
+   [luminus-log4j "0.1.5"]
+   [luminus/config "0.8"]
 
    ;; DB
-   [org.xerial/sqlite-jdbc "3.8.11.1"]
-   [migratus "0.8.9"]
-   [conman "0.3.0"]
+   [org.xerial/sqlite-jdbc "3.8.11.2"]
+   [migratus "0.8.28"]
+   [conman "0.6.0"]
 
    ;; utils
-   [compojure "1.4.0"]
+   [compojure "1.5.1"]
    [bouncer "1.0.0"]
-   [mount "0.1.8"]
-   [cheshire "5.5.0"]
+   [mount "0.1.10"]
+   [cheshire "5.6.3"]
    [midje "1.8.3"]
    [buddy "0.10.0"]
-   [clj-time "0.11.0"]]
+   [clj-time "0.12.0"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "sempro.jar"
