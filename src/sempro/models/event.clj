@@ -61,7 +61,7 @@
         errors (first  parsed)
         event  (second parsed)]
     (if (nil? errors)
-      (do (db/create-event<! event)
+      (do (db/create-event! event)
           [true event])
       [false {:error {:input-validation errors}}])))
 

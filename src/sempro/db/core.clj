@@ -1,6 +1,5 @@
 (ns sempro.db.core
   (:require
-    [yesql.core :refer [defqueries]]
     [config.core :refer [env]]
     [conman.core :as conman]
     [mount.core :refer [defstate]]
@@ -18,7 +17,7 @@
 
 (defn connect! []
   (let [conn (atom nil)]
-    (conman/connect! conn pool-spec)
+    (conman/connect! pool-spec)
     conn))
 
 (defn disconnect! [conn]

@@ -43,7 +43,7 @@
         user   (second parsed)]
     (if (nil? errors)
       (let [pass   (hash-pass (:pass user))
-            row-id (db/create-user<! (assoc user :pass pass))]
+            row-id (db/create-user! (assoc user :pass pass))]
         (conj [true] (-> (assoc user :id (row-id (first (keys row-id))))
                          (dissoc :pass))))
       [false {:error {:input-validation errors}}])))
