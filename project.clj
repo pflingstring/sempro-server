@@ -18,7 +18,6 @@
    ;; luminus
    [luminus-http-kit "0.1.4"]
    [luminus-nrepl "0.1.3"]
-   [luminus-log4j "0.1.5"]
    [luminus/config "0.8"]
 
    ;; DB
@@ -33,35 +32,38 @@
    [cheshire "5.6.3"]
    [midje "1.8.3"]
    [buddy "0.10.0"]
-   [clj-time "0.12.0"]]
+   [clj-time "0.12.0"]
+   [cprop "0.1.9"]]
+
+  :main sempro.core
+  :source-paths   ["src/clj"]
+  :resource-paths ["resources"]
 
   :min-lein-version "2.0.0"
   :uberjar-name "sempro.jar"
-  :jvm-opts ["-server"]
-  :resource-paths ["resources"]
+  :jvm-opts ["-server" "-Dconf=.lein-env"]
+  :migratus {:store :database :db ~(get (System/getenv) "DATABASE_URL")}
 
-  :main sempro.core
-  :migratus {:store :database}
-
-  :plugins [[lein-environ "1.0.1"]
-            [migratus-lein "0.2.1"]
+  :plugins [[lein-cprop "1.0.1"]
+            [migratus-lein "0.4.1"]
             [lein-cloverage "1.0.6"]]
   :profiles
-  {:uberjar {:omit-source true
-             :env {:production true}
-             :aot :all
-             :source-paths ["env/prod/clj"]
-             :resource-paths ["env/prod/resources"]}
-   :dev           [:project/dev :profiles/dev]
-   :test          [:project/test :profiles/test]
-   :project/dev  {:dependencies [[prone "1.0.1"]
+  {:uberjar       {:omit-source    true
+                   :env            {:production true}
+                   :aot            :all
+                   :source-paths   ["env/prod/clj"]
+                   :resource-paths ["env/prod/resources"]}
+
+   :dev  [:project/dev  :profiles/dev]
+   :test [:project/test :profiles/test]
+
+   :project/dev  {:dependencies [[prone "1.1.1"]
                                  [ring/ring-mock "0.3.0"]
-                                 [ring/ring-devel "1.4.0"]
-                                 [pjstadig/humane-test-output "0.7.1"]
+                                 [ring/ring-devel "1.5.0"]
+                                 [pjstadig/humane-test-output "0.8.1"]
                                  [mvxcvi/puget "1.0.0"]]
                   
-                  
-                  :source-paths ["env/dev/clj"]
+                  :source-paths   ["env/dev/clj"]
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
@@ -70,8 +72,9 @@
                   :env {:dev        true
                         :port       3000
                         :nrepl-port 7000}}
+
    :project/test {:env {:test       true
                         :port       3001
                         :nrepl-port 7001}}
-   :profiles/dev {}
+   :profiles/dev  {}
    :profiles/test {}})
