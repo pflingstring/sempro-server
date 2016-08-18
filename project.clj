@@ -27,6 +27,7 @@
    [conman "0.6.0"]
 
    ;; utils
+   [ch.qos.logback/logback-classic "1.1.7"]
    [compojure "1.5.1"]
    [bouncer "1.0.0"]
    [mount "0.1.10"]
