@@ -8,6 +8,7 @@
    ;; core
    [org.clojure/tools.logging "0.3.1"]
    [org.clojure/clojure "1.8.0"]
+   [org.clojure/tools.cli "0.3.5"]
 
    ;; ring
    [ring "1.5.0" :exclusions [ring/ring-jetty-adapter]]

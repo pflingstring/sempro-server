@@ -2,7 +2,7 @@
   (:require
     [ring.util.http-response :as response]
     [clojure.tools.logging   :as log]
-    [sempro.config :refer [defaults]]
+    [sempro.env :refer [defaults]]
     [config.core   :refer [env]]
     [buddy.auth.middleware    :refer [wrap-authentication wrap-authorization]]
     [buddy.auth.accessrules   :refer [restrict wrap-access-rules]]

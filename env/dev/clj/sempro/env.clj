@@ -1,9 +1,9 @@
-(ns sempro.config
+(ns sempro.env
   (:require
     [clojure.tools.logging :as log]
-    [sempro.dev-middleware :refer [wrap-dev]]
-))
+    [sempro.dev-middleware :refer [wrap-dev]]))
 
 (def defaults
-  {:init #(log/info "\n-=[sempro started successfully using the development profile]=-")
+  {:init (fn [] (log/info "\n-=[guestbook started successfully using the development profile]=-"))
+   :stop (fn [] (log/info "\n-=[guestbook has shut down successfully]=-"))
    :middleware wrap-dev})

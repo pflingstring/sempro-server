@@ -8,7 +8,8 @@
 (def ^:dynamic conn)
 
 (def pool-spec
-  {:adapter    :sqlite
+  {
+   ;:adapter    :sqlite
    :init-size  1
    :min-idle   1
    :max-idle   4
