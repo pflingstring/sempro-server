@@ -17,9 +17,7 @@
    :jdbc-url   (env :database-url)})
 
 (defn connect! []
-  (let [conn (atom nil)]
-    (conman/connect! pool-spec)
-    conn))
+  (conman/connect! pool-spec))
 
 (defn disconnect! [conn]
   (conman/disconnect! conn))
