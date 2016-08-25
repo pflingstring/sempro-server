@@ -35,9 +35,9 @@
    > bad response if not"
   [request]
   (let [pass  (:pass request)
-        email (assoc {} :email (:email request))                            ; TODO: validate email
-        user  (first (db/get-user-by-email email))
-        token (auth/sign-token email)]
+        email (:email request)
+        user  (db/get-user-by-email {:email email})
+        token (auth/sign-token {:email email})]
     (if (m/password-matches? (:email user) pass)
       (create-response ok (str "Token " token))
       (create-response bad-request {:error "login error"}))))

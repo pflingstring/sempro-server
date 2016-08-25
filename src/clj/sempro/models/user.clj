@@ -16,7 +16,6 @@
   [email password]
   (let [hashed-pass (-> {:email email}
                         (db/get-user-by-email)
-                        (first)
                         (get :pass))]
     (hashers/check password hashed-pass)))
 
