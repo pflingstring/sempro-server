@@ -73,7 +73,7 @@
 ;;
 (defn is-boss?
   [req]
-  (let [user (first (db/get-user-by-email (:identity req)))
+  (let [user (db/get-user-by-email (:identity req))
         job  (:job user)]
     (boolean (some #(= job %) (vals m/bosses)))))
 

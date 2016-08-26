@@ -69,7 +69,7 @@
   "id must be an Integer
   returns a map with the required id"
   [id]
-  (first (db/get-event {:id id})))
+  (db/get-event {:id id}))
 
 (defn get-all
   "returns a LazySeq with all events"
@@ -102,7 +102,7 @@
 
 (defn get-permissions
   [id]
-  (first (db/get-event-permissions {:id id})))
+  (db/get-event-permissions {:id id}))
 
 (defn update-permissions
   "updates permissions for given ID
