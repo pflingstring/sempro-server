@@ -25,50 +25,50 @@
 ;;
 ;; TESTS
 ;;
-(mount.core/start)
-(conman.core/with-transaction [t-conn db/conn]
-  (jdbc/db-set-rollback-only! t-conn)
-  (clojure.test/deftest users
-  (fact "..:: USER ::.."
+(clojure.test/deftest users
+  (conman.core/with-transaction [db/conn]
+    (jdbc/db-set-rollback-only! db/conn)
 
-    (facts "using models.user"
-      (fact "successfully create a user"
-        (let [rand res/user-rand
-              user (do (create rand)
-                       (-> (db/get-user-by-email {:email (:email rand)})
-                           (first) (u/ignore-key :id)))]
-          user) => contains res/user-rand)
+    (fact "..:: USER ::.."
 
-      (facts "password hashing and token generating"
-        (let [plain-pass "s3cr3t_P@s$w0rd"
-              user-email (-> (create res/hashed-password-user) (second) (:email))]
-          (fact "should pass the test"
-            (hash-pass plain-pass) => "pbkdf2+sha256$73616c61746963$100000$1bcaca26f7b0eca0216174b1859f19fc6ef2a5a1a34beb301e0f793103e65520"
-            (password-matches? user-email "HASHmyPASSword") => true
-            (password-matches? user-email plain-pass)       => false
-            (hash-pass plain-pass) =not=> "IMAHackerLOL_89")
-          (fact "create auth-token and verify it"
-            (let [id {:id 123}] id => (-> id auth/sign-token auth/unsign-token))))))
+      (facts "using models.user"
+        (fact "successfully create a user"
+          (let [rand res/user-rand
+                user (do (create rand)
+                         (-> (db/get-user-by-email {:email (:email rand)})
+                             (first) (u/ignore-key :id)))]
+            user) => contains res/user-rand)
 
-
-    (fact "using handlers.user"
-      (facts "input-validation"
-        (fact "email-error"    (new-user-req res/kaput-email) => (u/input-error {:email '("email must be a valid email address")}))
-        (fact "password-error" (new-user-req res/kaput-pass)  => (u/input-error {:pass  '("pass is less than the minimum")}))))
+        (facts "password hashing and token generating"
+          (let [plain-pass "s3cr3t_P@s$w0rd"
+                user-email (-> (create res/hashed-password-user) (second) (:email))]
+            (fact "should pass the test"
+              (hash-pass plain-pass) => "pbkdf2+sha256$73616c61746963$100000$1bcaca26f7b0eca0216174b1859f19fc6ef2a5a1a34beb301e0f793103e65520"
+              (password-matches? user-email "HASHmyPASSword") => true
+              (password-matches? user-email plain-pass)       => false
+              (hash-pass plain-pass) =not=> "IMAHackerLOL_89")
+            (fact "create auth-token and verify it"
+              (let [id {:id 123}] id => (-> id auth/sign-token auth/unsign-token))))))
 
 
-    (facts "authorise"
-      (let [user (second (create res/user-harry))]
-        (fact "accept password" (password-matches? (:email user) "expeliarmus") => true)
-        (fact "reject password" (password-matches? (:email user) "ronWeaserby") => false)
+      (fact "using handlers.user"
+        (facts "input-validation"
+          (fact "email-error"    (new-user-req res/kaput-email) => (u/input-error {:email '("email must be a valid email address")}))
+          (fact "password-error" (new-user-req res/kaput-pass)  => (u/input-error {:pass  '("pass is less than the minimum")}))))
 
-        (fact "authorise user"
-          (let [user-info   {:email (:email user) :pass "expeliarmus"}
-                wrong-email (assoc user-info :email "you@know.who")
-                wrong-pass  (assoc user-info :pass  "Vingardium LeviosAAA")]
-            (fact "return login error"
-              (login-req wrong-email) => (u/error "login error")
-              (login-req wrong-pass)  => (u/error "login error"))
-            (fact "successfully authenticate the user"
-                (auth/unsign-token (u/get-token user-info)) => (assoc {} :email (:email user)))))))
+
+      (facts "authorise"
+        (let [user (second (create res/user-harry))]
+          (fact "accept password" (password-matches? (:email user) "expeliarmus") => true)
+          (fact "reject password" (password-matches? (:email user) "ronWeaserby") => false)
+
+          (fact "authorise user"
+            (let [user-info   {:email (:email user) :pass "expeliarmus"}
+                  wrong-email (assoc user-info :email "you@know.who")
+                  wrong-pass  (assoc user-info :pass  "Vingardium LeviosAAA")]
+              (fact "return login error"
+                (login-req wrong-email) => (u/error "login error")
+                (login-req wrong-pass)  => (u/error "login error"))
+              (fact "successfully authenticate the user"
+                  (auth/unsign-token (u/get-token user-info)) => (assoc {} :email (:email user)))))))
     )))
