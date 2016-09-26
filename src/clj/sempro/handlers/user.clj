@@ -2,7 +2,7 @@
   (:require
     [buddy.auth :refer [authenticated? throw-unauthorized]]
     [sempro.utils.response   :refer [create-response]]
-    [ring.util.http-response :refer [ok bad-request created]]
+    [ring.util.http-response :refer [ok bad-request created unauthorized]]
     [sempro.utils.error :as err]
     [sempro.models.user :as m]
     [sempro.auth    :as auth]
@@ -50,7 +50,7 @@
   [request]
   (if (authenticated? request)
     (create-response ok (:identity request))
-    (throw-unauthorized "Must be authorized")))
+    (create-response unauthorized {:error "Must be authorized"})))
 
 (defn update-status
   "updates user-status for given ID"
