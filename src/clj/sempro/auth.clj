@@ -4,8 +4,9 @@
     [buddy.core.keys :as keys]
     [buddy.auth.backends.token :refer [jws-backend]]))
 
-(def private-key (keys/private-key "ec-privatekey.pem"))
-(def public-key  (keys/public-key  "ec-publickey.pem"))
+(def path (config.core/env :user-dir))
+(def private-key (keys/private-key (str path "/ec-privatekey.pem")))
+(def public-key  (keys/public-key  (str path "/ec-publickey.pem")))
 (def sign-alg {:alg :es256})
 
 (defn sign-token [user-id]
