@@ -3,6 +3,7 @@
     [sempro.utils.response :refer [create-response]]
     [sempro.handlers.user  :as user]
     [sempro.handlers.event :as event]
+    [sempro.layout :as layout]
 
     [ring.util.http-response :refer [ok bad-request!]]
     [compojure.core :refer [defroutes context GET POST]]
@@ -11,7 +12,7 @@
     ))
 
 (defroutes home-routes
-  (GET "/"      [] user/home)
+  (GET "/"      [] (layout/render "home.html"))
   (GET "/about" [] (create-response ok {:message "about"})))
 
 (defroutes user-routes

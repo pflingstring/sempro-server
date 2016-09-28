@@ -1,5 +1,6 @@
 (ns user
   (:require [mount.core :as mount]
+            [sempro.figwheel :refer [start-fw stop-fw cljs]]
             sempro.core))
 
 (defn start []

@@ -28,6 +28,8 @@
    [conman "0.6.0"]
 
    ;; utils
+   [reagent "0.6.0"]
+   [selmer "1.0.9"]
    [ch.qos.logback/logback-classic "1.1.7"]
    [compojure "1.5.1"]
    [bouncer "1.0.0"]
@@ -83,6 +85,7 @@
                     [binaryage/devtools "0.8.2"]
                     [figwheel-sidecar "0.5.7"]
                     [com.cemerick/piggieback "0.2.1"]
+                    [org.clojure/tools.nrepl "0.2.11"]
                     [mvxcvi/puget "1.0.0"]]
        :plugins    [[lein-figwheel "0.5.7"]
                     [org.clojure/clojurescript "1.9.229"]]
@@ -99,7 +102,8 @@
                          :pretty-print  true}}}}
        :source-paths   ["env/dev/clj"]
        :resource-paths ["env/dev/resources"]
-       :repl-options   {:init-ns user}
+       :repl-options   {:init-ns user
+                        :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]}
        :injections     [(require 'pjstadig.humane-test-output)
                         (pjstadig.humane-test-output/activate!)]
        ;;when :nrepl-port is set the application starts the nREPL server on load
@@ -128,8 +132,7 @@
    :profiles/dev  {}
    :profiles/test {}}
 
-  :figwheel {
-             :http-server-root "public"
-             :nrepl-port       7002
-             :css-dirs         ["resources/public/css"]
-             :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
+  :figwheel { :http-server-root "public"
+              :nrepl-port       7002
+              :css-dirs         ["resources/public/css"]
+              :nrepl-middleware [cemerick.piggieback/wrap-cljs-repl]})
