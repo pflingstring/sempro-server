@@ -29,6 +29,7 @@
 
    ;; utils
    [reagent "0.6.0"]
+   [re-frame "0.9.1"]
    [selmer "1.0.9"]
    [ch.qos.logback/logback-classic "1.1.7"]
    [compojure "1.5.1"]
@@ -79,6 +80,7 @@
 
    :project/dev {
      :dependencies [[prone "1.1.1"]
+                    [re-frisk "0.3.2"]
                     [ring/ring-mock "0.3.0"]
                     [ring/ring-devel "1.5.0"]
                     [pjstadig/humane-test-output "0.8.1"]
