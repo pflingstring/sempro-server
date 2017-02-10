@@ -28,6 +28,8 @@
    [conman "0.6.0"]
 
    ;; utils
+   [cljs-ajax "0.5.8"]
+   [day8.re-frame/http-fx "0.1.3"]
    [reagent "0.6.0"]
    [re-frame "0.9.1"]
    [selmer "1.0.9"]
