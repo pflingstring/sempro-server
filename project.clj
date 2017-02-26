@@ -28,9 +28,11 @@
    [conman "0.6.0"]
 
    ;; utils
+   [figwheel-sidecar "0.5.0"]
    [cljs-ajax "0.5.8"]
    [day8.re-frame/http-fx "0.1.3"]
-   [reagent "0.6.0"]
+   [cljs-react-material-ui "0.2.38"]
+   [reagent "0.6.0" :exclusions [cljsjs/react-dom org.clojure/tools.reader cljsjs/react]]
    [re-frame "0.9.1"]
    [selmer "1.0.9"]
    [ch.qos.logback/logback-classic "1.1.7"]
@@ -91,7 +93,7 @@
                     [com.cemerick/piggieback "0.2.1"]
                     [org.clojure/tools.nrepl "0.2.11"]
                     [mvxcvi/puget "1.0.0"]]
-       :plugins    [[lein-figwheel "0.5.7"]
+       :plugins    [[lein-figwheel "0.5.9"]
                     [org.clojure/clojurescript "1.9.229"]]
        :cljsbuild {
         :builds {

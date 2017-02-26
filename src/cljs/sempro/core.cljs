@@ -1,82 +1,70 @@
 (ns sempro.core
-  (:require [reagent.core :as r]
-            [re-frame.core :as rf]
-            [re-frisk.core :refer [enable-re-frisk!]]
-            [ajax.core :refer [GET POST]]))
+  (:require
+    [re-frisk.core :refer [enable-re-frisk!]]
+    [ajax.core :refer [GET POST]]
 
-;;
-;; Event Handlers
-;;
-(rf/reg-event-db :init-db (fn [_ _] {}))
+    [cljsjs.material-ui]
+    [cljs-react-material-ui.core :refer [get-mui-theme color]]
+    [cljs-react-material-ui.reagent :as ui]
+    [cljs-react-material-ui.icons   :as ic]
+
+    [reagent.core  :as r]
+    [re-frame.core :as rf]
+    ))
 
 
-;; TODO: get rid of side effects, i.e. 'describe', not 'cause'
+(defn event-view []
+  [ui/mui-theme-provider
+   {:mui-theme (get-mui-theme
+                 {:palette {:text-color (color :green800)}})}
 
-(rf/reg-event-db
-  :to-localStorage
-  (fn [db [_ token]]
-    (.setItem js/localStorage "pem" token)
-    (assoc db :token token)))
+   [:div
+    [ui/app-bar {:title "Sempro"}]
 
-(rf/reg-event-db
-  :from-localStorage
-  (fn [db _]
-    (let [header (.getItem js/localStorage "pem")]
-      (assoc db :header header))))
+    [ui/paper {:style {:width "550px"}}
+     [ui/card {:expandable true}
+      [ui/card-header {:title                  "Begrusungsabend"
+                       :subtitle               "1. April 2017 | 20:15 Uhr"
+                       :show-expandable-button true
+                       :act-as-expander        true}]
+      [ui/card-text {:expandable true
+                     :text-color "black"}
+       [ui/divider] [:br]
+       "Welcome back!"]]
 
-(rf/reg-event-db
-  :login
-  (fn [db [_ login-data]]
-    (POST "/login"
-          {:params @login-data
-           :handler #(rf/dispatch [:to-localStorage %1])})
-    (assoc db :logged-in true)))
+     [ui/card {:expandable true}
+      [ui/card-header {:title                  "HausundGartentage"
+                       :subtitle               "4. 5. April 2017 | 10:15 Uhr"
+                       :show-expandable-button true
+                       :act-as-expander        true}]]
 
-(rf/reg-event-db
-  :pop-events
-  (fn [db [_ events]]
-    (assoc db :events events)))
+     [ui/card {:expandable true}
+      [ui/card-header {:title                  "Convent"
+                       :subtitle               "4. April 2017 | 20:15 Uhr"
+                       :show-expandable-button true
+                       :act-as-expander        true}]
+      [ui/card-text {:expandable true}
+       [ui/divider]
+       [:br]
+       "Anconvent des SS. 2917"]]
 
-(rf/reg-event-db
-  :get-events
-  (fn [db _]
-    (GET "/events"
-         {:headers {"Authorization" (:token db)}
-          :handler #(rf/dispatch [:pop-events %])})
-    (assoc db :events [])))
+     [ui/card {:expandable true}
+      [ui/card-header {:title                  "Ankneipe"
+                       :subtitle               "4. April 2017 | 20:15 Uhr"
+                       :show-expandable-button true
+                       :act-as-expander        true}]]
 
-(rf/reg-sub
-  :show-events
-  (fn [db _]
-    (:events db)))
-
-(defn login-view [value]
-  [:div
-   [:h1 "Login"]
-   [:input {:type      "text" :value (:email @value)
-            :on-change #(swap! value assoc :email (-> % .-target .-value))}]
-
-   [:input {:type      "text" :value (:pass @value)
-            :on-change #(swap! value assoc :pass (-> % .-target .-value))}]
-
-   [:input {:type     "button" :value "Login"
-            :on-click #(rf/dispatch [:login value])}]
-
-   [:input {:type     "button" :value "GET EVENTS"
-            :on-click #(rf/dispatch [:get-events])}]
-
-   [:h1 "Events"]
-   [:p (str "my events " @(rf/subscribe [:show-events]))]])
+     ]]])
 
 
 (defn ui []
   [:div
-   [login-view (r/atom {})]])
+   [event-view]
+   ])
 
 (defn mount-components []
   (r/render [ui] (.getElementById js/document "root")))
 
 (defn init! []
-  (rf/dispatch-sync [:init-db])
   (enable-re-frisk!)
   (mount-components))
